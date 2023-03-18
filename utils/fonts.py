@@ -1,13 +1,8 @@
 import pygame
+from utils.constants import TEXT_COLOR, FONT_SIZES
 
 # Font directory
 FONTS_DIR = "assets/fonts"
-
-# Font sizes
-FONT_SIZES = {"small": 20, "medium": 30, "large": 40}
-
-# Font colors
-TEXT_COLOR = (255, 255, 255)
 
 
 def load_font(font_name, font_size):
