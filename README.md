@@ -17,7 +17,7 @@ pygameuno/
 │ ├── player.py
 ├── screens/
 │ ├── start_menu.py
-│ ├── settings_menu.py
+│ ├── options_menu.py
 │ ├── game_screen.py
 │ ├── end_menu.py
 ├── utils/

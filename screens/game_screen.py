@@ -1,5 +1,5 @@
 class GameScreen:
-    def __init__(self, screen):
+    def __init__(self, screen, options):
         pass
 
     def run(self):

@@ -1,60 +1,49 @@
 import pygame
 from utils.constants import *
+from screens.screen import Screen
 from screens.game_screen import GameScreen
-from screens.settings_menu import SettingsMenu
+from screens.options_menu import OptionsMenu
 from classes.button import Button
 from classes.text_box import TextBox
 
 
-class StartMenu:
-    def __init__(self, screen):
-        self.screen = screen
-        self.background_color = BACKGROUND_COLOR
-        self.title = TextBox( (SCREEN_WIDTH / 2) - 75,
-            50,
-            150,
-            50,
-            "Pygame UNO",
-            GREEN,
-            )
-        self.start_button = Button(
-            (SCREEN_WIDTH / 2) - 75,
-            SCREEN_HEIGHT / 2 - 100,
-            150,
-            50,
-            "Start",
-            TEXT_COLOR,
-            BUTTON_COLOR,
+class StartMenu(Screen):
+    def __init__(self, screen, options):
+        super().__init__(screen, options)
+        self.title = TextBox(
+            x="center",
+            y=self.screen_height // 10,
+            size=self.screen_size,
+            text="Pygame UNO",
+            text_color=GREEN,
         )
-        self.settings_button = Button(
-            (SCREEN_WIDTH / 2) - 75,
-            SCREEN_HEIGHT / 2,
-            150,
-            50,
-            "Settings",
-            TEXT_COLOR,
-            BUTTON_COLOR,
-        )
-        self.end_button = Button(
-            (SCREEN_WIDTH / 2) - 75,
-            SCREEN_HEIGHT / 2 + 100,
-            150,
-            50,
-            "End",
-            TEXT_COLOR,
-            BUTTON_COLOR,
-        )
-        self.is_running = True
-        self.buttons = [self.start_button, self.settings_button, self.end_button]
+        self.buttons = [
+            Button(
+                x="center",
+                y=self.screen_height // 10 * 3,
+                size=self.screen_size,
+                text="START",
+            ),
+            Button(
+                x="center",
+                y=self.screen_height // 10 * 5,
+                size=self.screen_size,
+                text="OPTIONS",
+            ),
+            Button(
+                x="center",
+                y=self.screen_height // 10 * 7,
+                size=self.screen_size,
+                text="QUIT",
+            ),
+        ]
         self.selected_button = 0
 
     def process_events(self):
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
+            self.handle_quit_event(event)
             # Mouse Controls
-            elif event.type == pygame.MOUSEMOTION:
+            if event.type == pygame.MOUSEMOTION:
                 pos = pygame.mouse.get_pos()
                 for i, button in enumerate(self.buttons):
                     if button.is_on_mouse(pos):
@@ -75,9 +64,6 @@ class StartMenu:
                 elif event.key == pygame.K_RETURN:
                     self.select_button()
 
-    def update(self):
-        pass
-
     def draw(self):
         self.screen.fill(self.background_color)
         self.title.draw(self.screen)
@@ -89,26 +75,19 @@ class StartMenu:
         if self.selected_button == 0:
             self.start_game()
         elif self.selected_button == 1:
-            self.settings()
+            self.open_options()
         elif self.selected_button == 2:
-            self.end()
+            self.quit_game()
 
     def start_game(self):
-        game_screen = GameScreen(self.screen)
+        game_screen = GameScreen(self.screen, self.options)
         game_screen.run()
         pass
 
-    def settings(self):
-        settings_menu = SettingsMenu(self.screen)
-        settings_menu.run()
+    def open_options(self):
+        options_menu = OptionsMenu(self.screen, self.options)
+        options_menu.run()
 
-    def end(self):
+    def quit_game(self):
         pygame.quit()
         quit()
-
-    def run(self):
-        while True:
-            self.process_events()
-            self.update()
-            self.draw()
-            pygame.display.update()

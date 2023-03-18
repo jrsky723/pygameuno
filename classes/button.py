@@ -1,15 +1,39 @@
 import pygame
 from utils.fonts import get_text_surface
 from utils.color_conversion import darken_color
+from classes.text_box import TextBox
+from utils.constants import (
+    SCREEN_WIDTH,
+    SCREEN_HEIGHT,
+    BUTTON_WIDTH,
+    BUTTON_HEIGHT,
+    BUTTON_TEXT_COLOR,
+    BUTTON_COLOR,
+)
 
 
-class Button:
-    def __init__(self, x, y, width, height, text, text_color, background_color):
-        self.rect = pygame.Rect(x, y, width, height)
-        self.text = text
-        self.text_color = text_color
+class Button(TextBox):
+    def __init__(
+        self,
+        x,
+        y,
+        size,
+        text,
+        text_color=False,
+        width=False,
+        height=False,
+        background_color=False,
+    ):
+        if not text_color:
+            text_color = BUTTON_TEXT_COLOR
+        if not background_color:
+            background_color = BUTTON_COLOR
+        if not width:
+            width = BUTTON_WIDTH[size]
+        if not height:
+            height = BUTTON_HEIGHT[size]
+        super().__init__(x, y, size, text, text_color, width, height, background_color)
         self.origin_background_color = background_color
-        self.background_color = background_color
         self.darken_amount = 0.5
         self.darken_background_color = darken_color(
             self.background_color, self.darken_amount
@@ -21,12 +45,11 @@ class Button:
         else:
             self.background_color = self.origin_background_color
         pygame.draw.rect(screen, self.background_color, self.rect)
-        text_surface = get_text_surface(self.text, "Arial", "medium", self.text_color)
         screen.blit(
-            text_surface,
+            self.text_surface,
             (
-                self.rect.x + self.rect.width / 2 - text_surface.get_width() / 2,
-                self.rect.y + self.rect.height / 2 - text_surface.get_height() / 2,
+                self.x + (self.width - self.text_surface.get_width()) / 2,
+                self.y + (self.height - self.text_surface.get_height()) / 2,
             ),
         )
 
