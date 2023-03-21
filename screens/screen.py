@@ -1,5 +1,6 @@
 import pygame
-from utils.constants import SCREEN_WIDTH, SCREEN_HEIGHT, BACKGROUND_COLOR
+from utils.constants import SCREEN as S
+from utils.color_conversion import rgb
 
 
 class Screen:
@@ -7,9 +8,14 @@ class Screen:
         self.screen = screen
         self.options = options
         self.screen_size = options["screen_size"]
-        self.screen_width = SCREEN_WIDTH[self.screen_size]
-        self.screen_height = SCREEN_HEIGHT[self.screen_size]
-        self.background_color = BACKGROUND_COLOR
+        self.color_blind = options["color_blind"]
+        self.rect_params = {
+            "screen_size": self.screen_size,
+            "color_blind": self.color_blind,
+        }
+        self.screen_width = screen.get_width()
+        self.screen_height = screen.get_height()
+        self.background_color = rgb(S.BACKGROUND_COLOR, self.color_blind)
 
     def handle_quit_event(self, event):
         if event.type == pygame.QUIT:
@@ -23,7 +29,7 @@ class Screen:
         pass
 
     def draw(self):
-        pass
+        self.screen.fill(self.background_color)
 
     def run(self):
         while True:
