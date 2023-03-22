@@ -14,11 +14,10 @@ class Rect:
         screen_size="medium",
         color_blind=False,
     ):
-        screen_width, screen_height = S.SIZE
         if x == "center":
-            x = (screen_width - width) / 2
+            x = (S.WIDTH_BASE - width) / 2
         if y == "center":
-            y = (screen_height - height) / 2
+            y = (S.HEIGHT_BASE - height) / 2
         self.width = width * SIZE_RATIO[screen_size]
         self.height = height * SIZE_RATIO[screen_size]
         self.x = x * SIZE_RATIO[screen_size]

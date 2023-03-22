@@ -28,8 +28,10 @@ class MenuScreen(Screen):
                             self.handle_hover(button)
                         else:
                             self.handle_unhover(button)
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                self.handle_click_down(self.hovered_button)
             elif event.type == pygame.MOUSEBUTTONUP:
-                self.handle_click(self.hovered_button)
+                self.handle_click_up(self.hovered_button)
 
                 # Keyboard Controls
             elif event.type == pygame.KEYDOWN:
@@ -39,20 +41,26 @@ class MenuScreen(Screen):
                         if self.hovered_button == button:
                             self.button_key_pos = (i, j)
                             break
+                print(pygame.key.name(event.key))
                 # Hover when move key pressed
-                if event.key == pygame.K_UP:
+                if event.key == pygame.key.key_code(self.key_bindings["up"]):
                     self.move_up()
-                elif event.key == pygame.K_DOWN:
+                elif event.key == pygame.key.key_code(self.key_bindings["down"]):
                     self.move_down()
-                elif event.key == pygame.K_LEFT:
+                elif event.key == pygame.key.key_code(self.key_bindings["left"]):
                     self.move_left()
-                elif event.key == pygame.K_RIGHT:
+                elif event.key == pygame.key.key_code(self.key_bindings["right"]):
                     self.move_right()
                 # Select if enter
-                elif event.key == pygame.K_RETURN:
-                    self.handle_click(self.hovered_button)
+                elif event.key == pygame.key.key_code(self.key_bindings["return"]):
+                    self.handle_click_down(self.hovered_button)
+
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.key.key_code(self.key_bindings["return"]):
+                    self.handle_click_up(self.hovered_button)
 
     def update(self):
+        super().update()
         for text in self.texts:
             text.update()
         for section in self.button_sections:
@@ -76,8 +84,11 @@ class MenuScreen(Screen):
             self.hovered_button = None
         button.unhover()
 
-    def handle_click(self, button):
-        pass
+    def handle_click_down(self, button):
+        button.click() if button else None
+
+    def handle_click_up(self, button):
+        button.unclick() if button else None
 
     def handle_key_hover(self, x, y):
         self.button_key_pos = (x, y)
@@ -89,12 +100,12 @@ class MenuScreen(Screen):
     def move_up(self):
         x, y = self.button_key_pos
         x = (x - 1) % len(self.button_sections)
-        self.handle_key_hover(x, y)
+        self.handle_key_hover(x, 0)
 
     def move_down(self):
         x, y = self.button_key_pos
         x = (x + 1) % len(self.button_sections)
-        self.handle_key_hover(x, y)
+        self.handle_key_hover(x, 0)
 
     def move_left(self):
         x, y = self.button_key_pos

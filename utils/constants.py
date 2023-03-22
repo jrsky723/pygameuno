@@ -7,17 +7,13 @@ SIZE_RATIO = {"small": 3 / 4, "medium": 1, "large": 5 / 4}
 class SCREEN:
     WIDTH_BASE = 1280
     HEIGHT_BASE = 720
-    SIZE = (1280, 720)
     TITLE_Y = 80
-    WIDTH = {
-        "small": WIDTH_BASE * SIZE_RATIO["small"],
-        "medium": WIDTH_BASE * SIZE_RATIO["medium"],
-        "large": WIDTH_BASE * SIZE_RATIO["large"],
-    }
-    HEIGHT = {
-        "small": HEIGHT_BASE * SIZE_RATIO["small"],
-        "medium": HEIGHT_BASE * SIZE_RATIO["medium"],
-        "large": HEIGHT_BASE * SIZE_RATIO["large"],
+    WIDTH = {"small": 960, "medium": 1280, "large": 1600}
+    HEIGHT = {"small": 540, "medium": 720, "large": 900}
+    SIZE = {
+        "small": (WIDTH["small"], HEIGHT["small"]),
+        "medium": (WIDTH["medium"], HEIGHT["medium"]),
+        "large": (WIDTH["large"], HEIGHT["large"]),
     }
     BACKGROUND_COLOR = (30, 30, 30)
     FONT_SIZE = 30

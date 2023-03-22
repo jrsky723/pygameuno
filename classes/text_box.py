@@ -21,10 +21,9 @@ class TextBox(Rect):
         self.text = text
         self.font_size = font_size * SIZE_RATIO[screen_size]
         self.text_color = rgb(text_color, color_blind)
-        temp_text_surface = get_text_surface(text, font_size, self.text_color)
-        self.width = max(width, temp_text_surface.get_width())
-        self.height = max(height, temp_text_surface.get_height())
-        self.text_surface = get_text_surface(text, self.font_size, self.text_color)
+        self.text_surface = get_text_surface(text, font_size, self.text_color)
+        self.width = max(width, self.text_surface.get_width())
+        self.height = max(height, self.text_surface.get_height())
         super().__init__(
             x=x,
             y=y,
@@ -44,3 +43,6 @@ class TextBox(Rect):
                 self.y + (self.height - self.text_surface.get_height()) / 2,
             ),
         )
+
+    def update(self):
+        self.text_surface = get_text_surface(self.text, self.font_size, self.text_color)

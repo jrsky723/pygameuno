@@ -59,15 +59,15 @@ class Button(Rect):
         )
 
     def update(self):
-        if self.selected:
-            self.background_color = self.select_background_color
-            self.text_color = self.select_text_color
-        elif self.clicked:
+        if self.clicked:
             self.background_color = self.select_background_color
             self.text_color = self.select_text_color
         elif self.hovered:
             self.background_color = self.hover_background_color
             self.text_color = self.hover_text_color
+        elif self.selected:
+            self.background_color = self.select_background_color
+            self.text_color = self.select_text_color
         else:
             self.background_color = self.origin_background_color
             self.text_color = self.origin_text_color

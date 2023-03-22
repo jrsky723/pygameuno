@@ -3,7 +3,7 @@ import pygame
 
 # Font directory
 FONTS_DIR = "assets/fonts"
-FONT = "Arcadeclassic"
+FONT = "Commodore-64-v6.3"
 
 
 def load_font(font_name, font_size):
