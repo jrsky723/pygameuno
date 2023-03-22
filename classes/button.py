@@ -1,60 +1,96 @@
 import pygame
 from utils.fonts import get_text_surface
-from utils.color_conversion import darken_color
-from classes.text_box import TextBox
-from utils.constants import (
-    SCREEN_WIDTH,
-    SCREEN_HEIGHT,
-    BUTTON_WIDTH,
-    BUTTON_HEIGHT,
-    BUTTON_TEXT_COLOR,
-    BUTTON_COLOR,
-)
+from utils.color_conversion import rgb
+from classes.rect import Rect
+from utils.constants import BUTTON as B, SIZE_RATIO
 
 
-class Button(TextBox):
+class Button(Rect):
     def __init__(
         self,
         x,
         y,
-        size,
-        text,
-        text_color=False,
-        width=False,
-        height=False,
-        background_color=False,
+        text="",
+        width=B.WIDTH,
+        height=B.HEIGHT,
+        font_size=B.FONT_SIZE,
+        background_color=B.COLOR,
+        text_color=B.TEXT_COLOR,
+        screen_size="medium",
+        color_blind=False,
+        hover_background_color=B.HOVER_COLOR,
+        hover_text_color=B.TEXT_HOVER_COLOR,
+        select_background_color=B.SELECT_COLOR,
+        select_text_color=B.TEXT_SELECT_COLOR,
     ):
-        if not text_color:
-            text_color = BUTTON_TEXT_COLOR
-        if not background_color:
-            background_color = BUTTON_COLOR
-        if not width:
-            width = BUTTON_WIDTH[size]
-        if not height:
-            height = BUTTON_HEIGHT[size]
-        super().__init__(x, y, size, text, text_color, width, height, background_color)
-        self.origin_background_color = background_color
-        self.darken_amount = 0.5
-        self.darken_background_color = darken_color(
-            self.background_color, self.darken_amount
+        super().__init__(
+            x=x,
+            y=y,
+            width=width,
+            height=height,
+            background_color=background_color,
+            screen_size=screen_size,
+            color_blind=color_blind,
         )
+        self.text = text
+        self.font_size = font_size * SIZE_RATIO[screen_size]
+        self.text_color = rgb(text_color, color_blind)
+        self.origin_background_color = self.background_color
+        self.origin_text_color = self.text_color
+        self.hover_background_color = rgb(hover_background_color, color_blind)
+        self.hover_text_color = rgb(hover_text_color, color_blind)
+        self.select_background_color = rgb(select_background_color, color_blind)
+        self.select_text_color = rgb(select_text_color, color_blind)
+        self.hovered = False
+        self.selected = False
+        self.clicked = False
 
-    def draw(self, screen, selected):
-        if selected:
-            self.background_color = self.darken_background_color
-        else:
-            self.background_color = self.origin_background_color
-        pygame.draw.rect(screen, self.background_color, self.rect)
+    def draw(self, screen):
+        super().draw(screen)
+        text_surface = get_text_surface(self.text, self.font_size, self.text_color)
         screen.blit(
-            self.text_surface,
+            text_surface,
             (
-                self.x + (self.width - self.text_surface.get_width()) / 2,
-                self.y + (self.height - self.text_surface.get_height()) / 2,
+                (
+                    self.x + (self.width - text_surface.get_width()) / 2,
+                    self.y + (self.height - text_surface.get_height()) / 2,
+                ),
             ),
         )
 
-    def is_on_mouse(self, pos):
-        return self.rect.collidepoint(pos)
+    def update(self):
+        if self.clicked:
+            self.background_color = self.select_background_color
+            self.text_color = self.select_text_color
+        elif self.hovered:
+            self.background_color = self.hover_background_color
+            self.text_color = self.hover_text_color
+        elif self.selected:
+            self.background_color = self.select_background_color
+            self.text_color = self.select_text_color
+        else:
+            self.background_color = self.origin_background_color
+            self.text_color = self.origin_text_color
+
+    def hover(self):
+        self.hovered = True
+
+    def unhover(self):
+        self.hovered = False
+
+    def select(self):
+        self.selected = True
+
+    def unselect(self):
+        self.selected = False
 
     def click(self):
-        pass
+        self.clicked = True
+
+    def unclick(self):
+        self.clicked = False
+
+    def reset(self):
+        self.hovered = False
+        self.selected = False
+        self.clicked = False

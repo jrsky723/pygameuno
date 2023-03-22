@@ -1,4 +1,7 @@
-class GameScreen:
+from screens.screen import Screen
+
+
+class GameScreen(Screen):
     def __init__(self, screen, options):
         pass
 
