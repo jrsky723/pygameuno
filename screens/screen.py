@@ -20,13 +20,58 @@ class Screen:
         self.background_color = rgb(S.BACKGROUND_COLOR, self.color_blind)
         self.running = True
 
+    def move_up(self):
+        pass
+
+    def move_down(self):
+        pass
+
+    def move_left(self):
+        pass
+
+    def move_right(self):
+        pass
+
+    def return_down(self):
+        pass
+
+    def return_up(self):
+        pass
+
+    def handle_movement(self, event):
+        if event.key == pygame.key.key_code(self.key_bindings["up"]):
+            self.move_up()
+        elif event.key == pygame.key.key_code(self.key_bindings["down"]):
+            self.move_down()
+        elif event.key == pygame.key.key_code(self.key_bindings["left"]):
+            self.move_left()
+        elif event.key == pygame.key.key_code(self.key_bindings["right"]):
+            self.move_right()
+
+    def handle_return_down(self, event):
+        if event.key == pygame.key.key_code(self.key_bindings["return"]):
+            self.return_down()
+
+    def handle_return_up(self, event):
+        if event.key == pygame.key.key_code(self.key_bindings["return"]):
+            self.return_up()
+
     def handle_quit_event(self, event):
         if event.type == pygame.QUIT:
             pygame.quit()
             quit()
 
-    def process_events(self):
+    def handle_mouse_event(self, event):
         pass
+
+    def handle_key_event(self, event):
+        pass
+
+    def process_events(self):
+        for event in pygame.event.get():
+            self.handle_quit_event(event)
+            self.handle_mouse_event(event)
+            self.handle_key_event(event)
 
     def update(self):
         if self.screen.get_size() != (self.screen_width, self.screen_height):

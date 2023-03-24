@@ -38,4 +38,5 @@ class Rect:
         pass
 
     def update(self):
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
         pass
