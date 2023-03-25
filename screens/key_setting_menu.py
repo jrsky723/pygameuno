@@ -16,10 +16,13 @@ class KeySettingMenu(MenuScreen):
         ############# Subtitle ###############
         self.texts += [
             TextBox(
-                x="center", y=167, text="Use Mouse to select a button", font_size=20
+                x="center",
+                y=S.TITLE_Y + 85,
+                text="Use Mouse to select a button",
+                **self.rect_params,
+                font_size=25,
             )
         ]
-
         ############### TEXTS ################
         T_X, T_Y, T_GAP = 110, 220, 70
         text_params = self.rect_params | {"x": T_X, "font_size": 30}
