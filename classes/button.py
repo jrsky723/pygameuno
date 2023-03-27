@@ -35,6 +35,10 @@ class Button(Rect):
         self.text = text
         self.font_size = font_size * SIZE_RATIO[screen_size]
         self.text_color = rgb(text_color, color_blind)
+        temp_text_surface = get_text_surface(self.text, self.font_size, self.text_color)
+        self.width = max(self.width, temp_text_surface.get_width())
+        self.height = max(self.height, temp_text_surface.get_height())
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
         self.origin_background_color = self.background_color
         self.origin_text_color = self.text_color
         self.hover_background_color = rgb(hover_background_color, color_blind)
@@ -59,6 +63,7 @@ class Button(Rect):
         )
 
     def update(self):
+        super().update()
         if self.clicked:
             self.background_color = self.select_background_color
             self.text_color = self.select_text_color

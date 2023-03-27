@@ -18,8 +18,8 @@ class StartMenu(MenuScreen):
             [Button(y=B_Y + B_GAP * 2, text="QUIT", **buttons_params)],
         ]
 
-    def handle_click_up(self, button):
-        super().handle_click_up(button)
+    def button_click_up(self, button):
+        super().button_click_up(button)
         if button is not None:
             if button.text == "START":
                 self.start_game()

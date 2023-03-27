@@ -12,10 +12,9 @@ if __name__ == "__main__":
     screen = pygame.display.set_mode((S.WIDTH[screen_size], S.HEIGHT[screen_size]))
     clock = pygame.time.Clock()
     start_menu = StartMenu(screen, options)
+    pygame.event.get()
     while True:
         clock.tick(FPS)
         start_menu.run()
-        if not start_menu.running:
-            break
     pygame.quit()
     quit()

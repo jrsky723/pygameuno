@@ -11,7 +11,6 @@ import os
 class OptionsMenu(MenuScreen):
     def __init__(self, screen, options):
         super().__init__(screen, options)
-        self.new_options = self.options
         ############### TITLE ################
         self.texts += [TextBox(text="OPTIONS", **self.title_params)]
 
@@ -69,15 +68,18 @@ class OptionsMenu(MenuScreen):
         self.button_sections.append(self.volume_buttons)
 
         ########    SAVE AND BACK BUTTONS   ########
-        save_params = button_params | {"y": B_Y + T_GAP * 4, "width": 180}
+        save_params = button_params | {"y": B_Y + T_GAP * 4, "width": 170}
         self.save_back_buttons = [
             Button(x=B_X, text="SAVE", **save_params),
-            Button(x=B_X + B_GAP * 3 / 2, text="BACK", **save_params),
+            Button(
+                x=B_X + B_GAP * 3 - save_params["width"], text="BACK", **save_params
+            ),
         ]
         self.button_sections.append(self.save_back_buttons)
 
-    def handle_click_down(self, button):
-        super().handle_click_down(button)
+    # Handle events
+    def button_click_down(self, button):
+        super().button_click_down(button)
         if button is None:
             return
         if button in self.screen_size_buttons:
@@ -93,40 +95,41 @@ class OptionsMenu(MenuScreen):
         elif button.text == "-":
             self.volume = max(self.volume - 1, 0)
 
-    def handle_click_up(self, button):
-        super().handle_click_up(button)
+    def button_click_up(self, button):
+        super().button_click_up(button)
         if button is not None:
-            if button.text == "BACK":
-                self.back()
-            elif button.text == "SAVE":
+            if button.text == "SAVE":
                 self.save_options()
             elif button.text == "SETTINGS":
                 self.open_key_settings()
-
-    def save_options(self):
-        self.new_options = {
-            "screen_size": self.screen_size_selected_button.text,
-            "color_blind": self.color_blind_selected_button.text == "ON",
-            "volume": self.volume,
-            "key_bindings": self.options["key_bindings"],
-        }
-        save_options_json(self.new_options)
-        if self.new_options["screen_size"] != self.screen_size:
-            self.change_screen_size(self.new_options["screen_size"])
-        self.__init__(self.screen, self.new_options)
 
     def change_screen_size(self, new_screen_size):
         os.environ["SDL_VIDEO_CENTERED"] = "1"  # center window
         pygame.display.set_mode((S.WIDTH[new_screen_size], S.HEIGHT[new_screen_size]))
 
+    def save_options(self):
+        new_options = {
+            "screen_size": self.screen_size_selected_button.text,
+            "color_blind": self.color_blind_selected_button.text == "ON",
+            "volume": self.volume,
+            "key_bindings": self.options["key_bindings"],
+        }
+        self.options = new_options
+        save_options_json(new_options)
+        if new_options["screen_size"] != self.screen_size:
+            self.change_screen_size(new_options["screen_size"])
+        self.__init__(self.screen, new_options)
+
+    def open_key_settings(self):
+        key_setting_menu = KeySettingMenu(self.screen, self.options)
+        options = key_setting_menu.run()
+        self.__init__(self.screen, options)
+
+    # Update and run
     def update(self):
         super().update()
         self.texts[5].text = str(self.volume)
 
-    def open_key_settings(self):
-        key_setting_menu = KeySettingMenu(self.screen, self.options)
-        new_key_settings = key_setting_menu.run()
-
     def run(self):
         super().run()
-        return self.new_options
+        return self.options
