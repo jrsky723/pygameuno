@@ -32,10 +32,10 @@ COLORS_DICT = {
 COLOR_BLIND_FRIENDLY_COLORS_DICT = {
     "black": (0, 0, 0),
     "white": (255, 255, 255),
-    "red": (255, 0, 0),
-    "green": (0, 255, 0),
-    "blue": (0, 0, 255),
-    "yellow": (255, 255, 0),
+    "red": (216, 27, 96),
+    "green": (17, 218, 197),
+    "blue": (30, 136, 229),
+    "yellow": (255, 193, 7),
     "dark_gray": (40, 40, 40),
 }
 
