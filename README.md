@@ -14,6 +14,7 @@ File Structure
   - sounds/
   - game/
 
+    - card.py
     - deck.py
     - player.py
     - uno.py
