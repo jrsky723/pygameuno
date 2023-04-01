@@ -15,7 +15,7 @@ class SCREEN:
         "medium": (WIDTH["medium"], HEIGHT["medium"]),
         "large": (WIDTH["large"], HEIGHT["large"]),
     }
-    BACKGROUND_COLOR = (30, 30, 30)
+    BACKGROUND_COLOR = (50, 50, 50)
     FONT_SIZE = 30
 
 
