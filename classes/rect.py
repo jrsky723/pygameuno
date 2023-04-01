@@ -26,6 +26,8 @@ class Rect:
         self.background_color = (
             rgb(background_color, color_blind) if background_color else None
         )
+        
+
 
     def draw(self, screen):
         if self.background_color is not None:
