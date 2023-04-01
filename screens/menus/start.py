@@ -1,9 +1,9 @@
 from utils.constants import SCREEN as S
-from screens.menu_screen import MenuScreen
-from screens.game_screen import GameScreen
-from screens.options_menu import OptionsMenu
-from classes.button import Button
-from classes.text_box import TextBox
+from screens.menu import MenuScreen
+from screens.game import GameScreen
+from screens.menus.options import OptionsMenu
+from renders.button import Button
+from renders.text_box import TextBox
 
 
 class StartMenu(MenuScreen):

@@ -1,5 +1,5 @@
 import pygame
-from screens.start_menu import StartMenu
+from screens.menus.start import StartMenu
 from utils.options import load_options_json
 from utils.constants import SCREEN as S
 

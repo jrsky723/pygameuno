@@ -1,7 +1,7 @@
 import pygame
 from utils.fonts import get_text_surface
 from utils.color_conversion import rgb
-from classes.rect import Rect
+from renders.rect import Rect
 from utils.constants import BUTTON as B, SIZE_RATIO
 
 

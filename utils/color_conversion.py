@@ -4,8 +4,9 @@ from utils.constants import (
 )
 
 
-def darken_color(color, amount):
-    return tuple([max(0, c * amount) for c in color])
+# change color by (0.5)
+def darken_color(color):
+    return tuple([max(0, c * 0.5) for c in color])
 
 
 def get_color_by_name(color_name, color_blind):

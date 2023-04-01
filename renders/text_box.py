@@ -1,4 +1,4 @@
-from classes.rect import Rect
+from renders.rect import Rect
 from utils.constants import TEXTBOX as T, SIZE_RATIO
 from utils.color_conversion import rgb
 from utils.fonts import get_text_surface

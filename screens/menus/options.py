@@ -1,8 +1,8 @@
 import pygame
-from screens.menu_screen import MenuScreen
-from screens.key_setting_menu import KeySettingMenu
-from classes.button import Button
-from classes.text_box import TextBox
+from screens.menu import MenuScreen
+from screens.menus.key_setting import KeySettingMenu
+from renders.button import Button
+from renders.text_box import TextBox
 from utils.options import save_options_json
 from utils.constants import SCREEN as S
 import os

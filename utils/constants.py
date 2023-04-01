@@ -55,6 +55,8 @@ FONT_SIZES = {
 class CARD:
     WIDTH = 100
     HEIGHT = 150
+    FONT_SIZE = 20
+    TEXT_COLOR = "white"
 
 
 # Button properties

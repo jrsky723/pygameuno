@@ -1,29 +1,47 @@
 ## UNO GAME with python
 
 File Structure
-pygameuno/
-├── assets/
-| ├── fonts/
-│ │ ├── Arial.ttf
-│ ├── card_images/
-│ │ ├── 0_red.png
-│ │ ├── 0_blue.png
-│ │ ├── ...
-├── classes/
-│ ├── card.py
-│ ├── computer_player.py
-│ ├── deck.py
-│ ├── uno.py
-│ ├── player.py
-├── screens/
-│ ├── start_menu.py
-│ ├── options_menu.py
-│ ├── game_screen.py
-│ ├── end_menu.py
-├── utils/
-│ ├── color_conversion.py
-│ ├── constants.py
-│ ├── timer.py
-│ ├── helpers.py
-│ ├── fonts.py
-├── main.py
+
+- pygameuno/
+
+  - Readme.md
+  - .gitignore
+  - main.py
+  - assets/
+    - fonts
+      - ComicSansMS3.ttf
+  - images/
+  - sounds/
+  - game/
+
+    - deck.py
+    - player.py
+    - uno.py
+
+  - renders/
+
+    - card.py
+    - button.py
+    - text_box.py
+    - rect.py
+
+  - screens/
+
+    - menu
+      - end.py
+      - key_setting.py
+      - options.py
+      - start.py
+    - game.py
+    - menu.py
+    - screen.py
+
+  - utils/
+
+    - constants.py
+    - color_conversion.py
+    - fonts.py
+    - options.py
+    - test.py
+
+  - tests/
