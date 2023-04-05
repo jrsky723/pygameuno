@@ -9,11 +9,11 @@ class Card(TextBox):
         x,
         y,
         text,
+        color,
         font_size=C.FONT_SIZE,
         text_color=C.TEXT_COLOR,
         width=C.WIDTH,
         height=C.HEIGHT,
-        background_color=C.COLOR,
         screen_size="medium",
         color_blind=False,
     ):
@@ -25,7 +25,7 @@ class Card(TextBox):
             text_color=text_color,
             width=width,
             height=height,
-            background_color=background_color,
+            background_color=color,
             screen_size=screen_size,
             color_blind=color_blind,
         )

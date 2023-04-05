@@ -52,7 +52,6 @@ class UnoGame:
         self.discard_pile.append(self.deck.pop(0))
 
 
-
 if __name__ == "__main__":
     game = UnoGame()
     for player in game.players:

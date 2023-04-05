@@ -89,9 +89,16 @@ class Screen:
     def draw(self):
         self.screen.fill(self.background_color)
 
-    def run(self):
+    def main_loop(self):
         while self.running:
             self.process_events()
             self.update()
             self.draw()
             pygame.display.update()
+
+    def run(self):
+        try:
+            self.main_loop()
+        except Exception as e:
+            print(e)
+            self.quit()

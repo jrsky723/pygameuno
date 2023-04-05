@@ -1,3 +1,5 @@
+import random
+
 from utils.constants import (
     COLOR_BLIND_FRIENDLY_COLORS_DICT,
     COLORS_DICT,
@@ -20,3 +22,7 @@ def rgb(color, color_blind=False):
     if isinstance(color, str):
         color = get_color_by_name(color, color_blind)
     return color
+
+
+def random_rgb():
+    return (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
