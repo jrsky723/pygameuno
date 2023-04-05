@@ -23,11 +23,11 @@ class UnoGame:
                 cards.append(Card(type="number", color=color, value=str(i)))
                 if i != 0:
                     cards.append(Card(type="number", color=color, value=str(i)))
-            # Add action cards
+            # Add normal action cards
             for value in ["skip", "reverse", "draw2"]:
                 cards.append(Card(type="action", color=color, value=value))
-            # Add wild cards
-            for value in ["draw4", "color_change", "reload"]:
+                cards.append(Card(type="action", color=color, value=value))
+                # Add wild action cards
                 cards.append(Card(type="wild", color="black", value=value))
         return cards
 
@@ -37,6 +37,8 @@ class UnoGame:
     def deal_cards(self, num_cards=7):
         for i in range(num_cards):
             for player in self.players:
+                if len(self.deck) == 0:
+                    return
                 card = self.deck.pop(0)
                 player.add_card(card)
 

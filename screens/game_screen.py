@@ -2,14 +2,15 @@ import pygame
 from game.uno_game import UnoGame
 from screens.screen import Screen
 from renders.card import Card
-from utils.constants import SCREEN as S, CARD as C
-from utils.color_conversion import rgb, random_rgb
+from renders.text_box import TextBox
+from renders.rect import Rect
+from utils.color_conversion import rgb
 
 
 class GameScreen(Screen):
     def __init__(self, screen, options):
         super().__init__(screen, options)
-        self.com_players_number = 1
+        self.com_players_number = 5
         self.max_players = 6
         self.game = UnoGame(player_number=self.com_players_number + 1)
         self.player = self.game.players[0]
@@ -42,35 +43,72 @@ class GameScreen(Screen):
             self.com_hand_surfaces.append(
                 pygame.Surface(self.com_hand_surface_const["size"])
             )
-
-        self.player_hand_surface.fill(rgb("dark_gray", self.color_blind))
-        self.board_surface.fill(rgb("blue", self.color_blind))
+        self.player_hand_surface.fill(self.background_color)
+        self.board_surface.fill(self.background_color)
         for hand_surface in self.com_hand_surfaces:
-            hand_surface.fill(random_rgb())
+            hand_surface.fill(self.background_color)
 
-    def draw_hand(self, surface, hand, is_player=True):
-        S_WIDTH = surface.get_width()
-        S_HEIGHT = surface.get_height()
-        C_WIDTH, C_HEIGHT = S_WIDTH / 13, S_HEIGHT / 3
-        C_GAP = C_WIDTH * 1.1
-        C_X, C_Y = C_WIDTH / 2, S_HEIGHT * 0.4
-        font_size = C.FONT_SIZE if is_player else C.FONT_SIZE * 0.7
+    # Draw the card_back img as many cards as the computer has. and also resize it to fit in the rectangle
+    def draw_com_player(self, surface, player):
+        # draw com name
+        com_name = TextBox(
+            text=player.name, x=10, y=13, font_size=25, **self.rect_params
+        )
+        com_name.draw(surface)
+
+        C_WIDTH, C_HEIGHT = 40, 60
+        C_GAP = C_WIDTH * 0.6 / (len(player.hand) / 7)  # cards length fix
+        C_X, C_Y = 30, 50
         card_params = self.rect_params | {
             "width": C_WIDTH,
             "height": C_HEIGHT,
-            "font_size": font_size,
             "y": C_Y,
         }
-        for i, card in enumerate(hand):
+        # card_back is a black rectangle which has white border
+        for i in range(len(player.hand)):
+            card_back = Rect(
+                **card_params,
+                x=C_X + C_GAP * i,
+                background_color=rgb("black"),
+                border_width=3
+            )
+            card_back.draw(surface)
+        # draw the number of cards
+        card_number = TextBox(
+            text=str(len(player.hand)),
+            x=250,
+            y=C_Y + 10,
+            font_size=40,
+            **self.rect_params
+        )
+        card_number.draw(surface)
+
+        # draw the number of cards
+
+    def draw_player_hand(self, surface, player):
+        # draw player name
+        player_name = TextBox(
+            text=player.name, x=10, y=15, font_size=30, **self.rect_params
+        )
+        player_name.draw(surface)
+
+        C_WIDTH, C_HEIGHT = 80, 110
+        C_GAP = C_WIDTH * 1.1 / (len(player.hand) / 7)
+        C_X, C_Y = 80, 70
+        card_params = self.rect_params | {
+            "width": C_WIDTH,
+            "height": C_HEIGHT,
+            "y": C_Y,
+        }
+        for i, card in enumerate(player.hand):
             card_params["x"] = C_X + i * C_GAP
             card_render = Card(**card_params, color=card.color, text=card.get_abb())
             card_render.draw(surface)
-        pass
 
     def draw_hands(self):
-        self.draw_hand(self.player_hand_surface, self.player.hand, is_player=True)
+        self.draw_player_hand(self.player_hand_surface, self.player)
         for i, com in enumerate(self.coms):
-            self.draw_hand(self.com_hand_surfaces[i], com.hand, is_player=False)
+            self.draw_com_player(self.com_hand_surfaces[i], com)
 
     def draw_top_card(self):
         pass

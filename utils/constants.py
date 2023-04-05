@@ -23,11 +23,11 @@ class SCREEN:
 COLORS_DICT = {
     "black": (0, 0, 0),
     "white": (255, 255, 255),
-    "red": (255, 0, 0),
-    "green": (0, 255, 0),
-    "blue": (0, 0, 255),
-    "yellow": (255, 255, 0),
-    "dark_gray": (40, 40, 40),
+    "red": (255, 50, 50),
+    "green": (50, 255, 50),
+    "blue": (50, 50, 255),
+    "yellow": (255, 255, 50),
+    "dark_gray": (50, 50, 50),
 }
 COLOR_BLIND_FRIENDLY_COLORS_DICT = {
     "black": (0, 0, 0),
@@ -51,11 +51,22 @@ FONT_SIZES = {
 }
 
 
+# Card Abbreviations
+CARD_ABBREVIATIONS = {
+    "skip": "S",
+    "reverse": "R",
+    "draw2": "+2",
+    "draw4": "+4",
+    "color_change": "CC",
+    "reload": "RL",
+}
+
+
 # Card properties
 class CARD:
     WIDTH = 100
     HEIGHT = 150
-    FONT_SIZE = 40
+    FONT_SIZE = 38
     TEXT_COLOR = "black"
     BACKGROUND_COLOR = "black"
 

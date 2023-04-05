@@ -17,6 +17,8 @@ class Card(TextBox):
         screen_size="medium",
         color_blind=False,
     ):
+        if color == "black":
+            text_color = "white"
         super().__init__(
             x=x,
             y=y,
@@ -28,6 +30,7 @@ class Card(TextBox):
             background_color=color,
             screen_size=screen_size,
             color_blind=color_blind,
+            border_width=3,
         )
         self.origin_background_color = self.background_color
         self.origin_text_color = self.text_color
@@ -37,8 +40,10 @@ class Card(TextBox):
 
     def draw(self, screen):
         super().draw(screen)
+        # draw border
 
     def update(self):
+        super().update()
         if self.hovered:
             self.background_color = self.hovered_backgound_color
             self.text_color = self.hovered_text_color

@@ -1,3 +1,6 @@
+from utils.constants import CARD_ABBREVIATIONS
+
+
 class Card:
     def __init__(
         self,
@@ -14,5 +17,5 @@ class Card:
         if self.type == "number":
             abb = self.value
         else:
-            abb = self.value[0:2].upper()
+            abb = CARD_ABBREVIATIONS[self.value]
         return abb

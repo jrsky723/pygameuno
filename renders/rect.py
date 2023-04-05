@@ -13,6 +13,9 @@ class Rect:
         background_color=None,
         screen_size="medium",
         color_blind=False,
+        # inner border
+        border_color="white",  # inner border color
+        border_width=0,
     ):
         if x == "center":
             x = (S.WIDTH_BASE - width) / 2
@@ -26,12 +29,20 @@ class Rect:
         self.background_color = (
             rgb(background_color, color_blind) if background_color else None
         )
-        
-
+        self.border_width = int(border_width * SIZE_RATIO[screen_size])
+        self.border_color = rgb(border_color, color_blind)
 
     def draw(self, screen):
         if self.background_color is not None:
             pygame.draw.rect(screen, self.background_color, self.rect)
+            # draw inner border
+        if self.border_width > 0:
+            pygame.draw.rect(
+                screen,
+                self.border_color,
+                self.rect,
+                self.border_width,
+            )
 
     def is_on_mouse(self, pos):
         return self.rect.collidepoint(pos)

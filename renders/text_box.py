@@ -17,18 +17,22 @@ class TextBox(Rect):
         background_color=None,
         screen_size="medium",
         color_blind=False,
+        border_color="white",
+        border_width=0,
     ):
         temp_text_surface = get_text_surface(text, font_size, text_color)
-        self.width = max(width, temp_text_surface.get_width())
-        self.height = max(height, temp_text_surface.get_height())
+        width = max(width, temp_text_surface.get_width())
+        height = max(height, temp_text_surface.get_height())
         super().__init__(
             x=x,
             y=y,
-            width=self.width,
-            height=self.height,
+            width=width,
+            height=height,
             background_color=background_color,
             screen_size=screen_size,
             color_blind=color_blind,
+            border_color=border_color,
+            border_width=border_width,
         )
         self.text = text
         self.font_size = font_size * SIZE_RATIO[screen_size]
@@ -43,8 +47,10 @@ class TextBox(Rect):
         screen.blit(
             self.text_surface,
             (
-                self.x + (self.width - self.text_surface.get_width()) / 2,
-                self.y + (self.height - self.text_surface.get_height()) / 2,
+                (
+                    self.x + (self.width - self.text_surface.get_width()) / 2,
+                    self.y + (self.height - self.text_surface.get_height()) / 2,
+                )
             ),
         )
 
