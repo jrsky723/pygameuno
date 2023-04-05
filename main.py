@@ -1,5 +1,5 @@
 import pygame
-from screens.menus.start import StartMenu
+from screens.menus.start_menu_screen import StartMenuScreen
 from utils.options import load_options_json
 from utils.constants import SCREEN as S
 
@@ -11,7 +11,7 @@ if __name__ == "__main__":
     screen_size = options["screen_size"]
     screen = pygame.display.set_mode((S.WIDTH[screen_size], S.HEIGHT[screen_size]))
     clock = pygame.time.Clock()
-    start_menu = StartMenu(screen, options)
+    start_menu = StartMenuScreen(screen, options)
     pygame.event.get()
     while True:
         clock.tick(FPS)

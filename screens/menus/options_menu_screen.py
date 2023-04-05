@@ -1,6 +1,6 @@
 import pygame
-from screens.menu import MenuScreen
-from screens.menus.key_setting import KeySettingMenu
+from screens.menu_screen import MenuScreen
+from screens.menus.key_setting_menu_screen import KeySettingMenuScreen
 from renders.button import Button
 from renders.text_box import TextBox
 from utils.options import save_options_json
@@ -8,7 +8,7 @@ from utils.constants import SCREEN as S
 import os
 
 
-class OptionsMenu(MenuScreen):
+class OptionsMenuScreen(MenuScreen):
     def __init__(self, screen, options):
         super().__init__(screen, options)
         ############### TITLE ################
@@ -121,7 +121,7 @@ class OptionsMenu(MenuScreen):
         self.__init__(self.screen, new_options)
 
     def open_key_settings(self):
-        key_setting_menu = KeySettingMenu(self.screen, self.options)
+        key_setting_menu = KeySettingMenuScreen(self.screen, self.options)
         options = key_setting_menu.run()
         self.__init__(self.screen, options)
 

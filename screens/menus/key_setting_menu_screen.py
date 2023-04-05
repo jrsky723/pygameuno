@@ -1,12 +1,12 @@
 import pygame
-from screens.menu import MenuScreen
+from screens.menu_screen import MenuScreen
 from renders.button import Button
 from renders.text_box import TextBox
 from utils.options import save_options_json
 from utils.constants import SCREEN as S
 
 
-class KeySettingMenu(MenuScreen):
+class KeySettingMenuScreen(MenuScreen):
     def __init__(self, screen, options):
         super().__init__(screen, options)
         self.selected_button = None

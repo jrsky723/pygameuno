@@ -1,12 +1,11 @@
-from utils.constants import SCREEN as S
-from screens.menu import MenuScreen
-from screens.game import GameScreen
-from screens.menus.options import OptionsMenu
+from screens.menu_screen import MenuScreen
+from screens.game_screen import GameScreen
+from screens.menus.options_menu_screen import OptionsMenuScreen
 from renders.button import Button
 from renders.text_box import TextBox
 
 
-class StartMenu(MenuScreen):
+class StartMenuScreen(MenuScreen):
     def __init__(self, screen, options):
         super().__init__(screen, options)
         self.texts += [TextBox(text="Pygame UNO", **self.title_params)]
@@ -33,6 +32,6 @@ class StartMenu(MenuScreen):
         game_screen.run()
 
     def open_options(self):
-        options_menu = OptionsMenu(self.screen, self.options)
+        options_menu = OptionsMenuScreen(self.screen, self.options)
         new_options = options_menu.run()
         self.__init__(self.screen, new_options)
