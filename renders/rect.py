@@ -21,6 +21,10 @@ class Rect:
             x = (S.WIDTH_BASE - width) / 2
         if y == "center":
             y = (S.HEIGHT_BASE - height) / 2
+        if x == "right":
+            x = S.WIDTH_BASE - width
+        if y == "bottom":
+            y = S.HEIGHT_BASE - height
         self.width = width * SIZE_RATIO[screen_size]
         self.height = height * SIZE_RATIO[screen_size]
         self.x = x * SIZE_RATIO[screen_size]

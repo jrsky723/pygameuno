@@ -51,17 +51,6 @@ FONT_SIZES = {
 }
 
 
-# Card Abbreviations
-CARD_ABBREVIATIONS = {
-    "skip": "S",
-    "reverse": "R",
-    "draw2": "+2",
-    "draw4": "+4",
-    "color_change": "CC",
-    "reload": "RL",
-}
-
-
 # Card properties
 class CARD:
     WIDTH = 100
@@ -69,7 +58,6 @@ class CARD:
     FONT_SIZE = 38
     TEXT_COLOR = "black"
     BACKGROUND_COLOR = "black"
-
 
 # Button properties
 class BUTTON:

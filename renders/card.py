@@ -1,5 +1,5 @@
 from renders.text_box import TextBox
-from utils.constants import CARD as C, SIZE_RATIO
+from utils.constants import CARD as C
 from utils.color_conversion import darken_color
 
 

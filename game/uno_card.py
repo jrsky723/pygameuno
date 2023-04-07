@@ -1,7 +1,7 @@
-from utils.constants import CARD_ABBREVIATIONS
+from game.uno_constants import CARD_ABBREVIATIONS
 
 
-class Card:
+class UnoCard:
     def __init__(
         self,
         type,
@@ -19,3 +19,6 @@ class Card:
         else:
             abb = CARD_ABBREVIATIONS[self.value]
         return abb
+
+    def get_color(self):
+        return self.color

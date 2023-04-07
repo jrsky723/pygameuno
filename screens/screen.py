@@ -1,4 +1,5 @@
 import pygame
+import traceback
 from utils.constants import SCREEN as S
 from utils.color_conversion import rgb
 
@@ -101,4 +102,5 @@ class Screen:
             self.main_loop()
         except Exception as e:
             print(e)
+            traceback.print_exc()
             self.quit()
