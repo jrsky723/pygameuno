@@ -10,26 +10,28 @@ class Card(TextBox):
         y,
         text,
         color,
+        screen_size,
+        color_blind,
         font_size=C.FONT_SIZE,
         text_color=C.TEXT_COLOR,
         width=C.WIDTH,
         height=C.HEIGHT,
-        screen_size="medium",
-        color_blind=False,
     ):
         if color == "black":
             text_color = "white"
         super().__init__(
-            x=x,
-            y=y,
-            text=text,
-            font_size=font_size,
-            text_color=text_color,
-            width=width,
-            height=height,
-            background_color=color,
-            screen_size=screen_size,
-            color_blind=color_blind,
+            x,
+            y,
+            text,
+            screen_size,
+            color_blind,
+            True,  # resize
+            True,  # reposition
+            width,
+            height,
+            font_size,
+            text_color,
+            color,  # background_color
             border_width=3,
         )
         self.origin_background_color = self.background_color

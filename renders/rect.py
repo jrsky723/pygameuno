@@ -10,9 +10,11 @@ class Rect:
         y,
         width,
         height,
+        screen_size,
+        color_blind,
+        reposition=True,
+        resize=True,
         background_color=None,
-        screen_size="medium",
-        color_blind=False,
         # inner border
         border_color="white",  # inner border color
         border_width=0,
@@ -25,15 +27,20 @@ class Rect:
             x = S.WIDTH_BASE - width
         if y == "bottom":
             y = S.HEIGHT_BASE - height
-        self.width = width * SIZE_RATIO[screen_size]
-        self.height = height * SIZE_RATIO[screen_size]
-        self.x = x * SIZE_RATIO[screen_size]
-        self.y = y * SIZE_RATIO[screen_size]
+        self.width, self.height, self.x, self.y = width, height, x, y
+        self.border_width = border_width
+        if resize:
+            for attr in ["width", "height"]:
+                setattr(self, attr, getattr(self, attr) * SIZE_RATIO[screen_size])
+            self.border_width = int(border_width * SIZE_RATIO[screen_size])
+        if reposition:
+            for attr in ["x", "y"]:
+                setattr(self, attr, getattr(self, attr) * SIZE_RATIO[screen_size])
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
         self.background_color = (
             rgb(background_color, color_blind) if background_color else None
         )
-        self.border_width = int(border_width * SIZE_RATIO[screen_size])
+
         self.border_color = rgb(border_color, color_blind)
 
     def draw(self, screen):

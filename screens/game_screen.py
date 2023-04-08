@@ -5,8 +5,8 @@ from renders.card import Card
 from renders.text_box import TextBox
 from renders.button import Button
 from renders.rect import Rect
-from utils.color_conversion import rgb
 from utils.timer import Timer
+from utils.color_conversion import rgb
 
 
 class GameScreen(Screen):
@@ -71,22 +71,25 @@ class GameScreen(Screen):
             "width": C_WIDTH,
             "height": C_HEIGHT,
             "y": C_Y,
-        }
-        self.draw_player_name(surface, player.name, FONT_SIZE)
+        } | self.rect_params
+        text_params = {
+            "font_size": FONT_SIZE,
+            "reposition": False,
+        } | self.rect_params
+        self.draw_player_name(surface, player.name, text_params)
         self.draw_player_hand(surface, player.hand, is_player, card_params, C_X, C_GAP)
-        self.draw_player_card_number(surface, len(player.hand), FONT_SIZE)
+        self.draw_player_card_number(surface, len(player.hand), text_params)
         if player.is_turn:
-            self.draw_timer(surface, FONT_SIZE)
+            self.draw_timer(surface, text_params)
         pass
 
-    def draw_player_name(self, surface, player_name, font_size):
-        S_WIDTH, S_HEIGHT = surface.get_width(), surface.get_height()
+    def draw_player_name(self, surface, player_name, text_params):
+        S_HEIGHT = surface.get_height()
         player_name_text = TextBox(
             text=player_name,
-            x=10,
-            y=13,
-            font_size=font_size,
-            **self.rect_params,
+            x=13,
+            y=S_HEIGHT * 0.1,
+            **text_params,
         )
         player_name_text.draw(surface)
 
@@ -97,33 +100,33 @@ class GameScreen(Screen):
             card_params["x"] = C_X + i * C_GAP
             if is_player:
                 card_render = Card(
-                    **card_params, color=card.get_color(), text=card.get_abb()
+                    **card_params,
+                    color=card.get_color(),
+                    text=card.get_abb(),
                 )
             else:
                 card_render = Rect(
-                    **card_params, background_color=rgb("black"), border_width=3
+                    **card_params, background_color="black", border_width=3
                 )
             card_render.draw(surface)
 
-    def draw_player_card_number(self, surface, card_number, font_size):
+    def draw_player_card_number(self, surface, card_number, text_params):
         S_WIDTH, S_HEIGHT = surface.get_width(), surface.get_height()
         card_number_text = TextBox(
             text=f"[{card_number}]",
             x=S_WIDTH * 0.8,
-            y=13,
-            font_size=font_size,
-            **self.rect_params,
+            y=S_HEIGHT * 0.1,
+            **text_params,
         )
         card_number_text.draw(surface)
 
-    def draw_timer(self, surface, font_size):
+    def draw_timer(self, surface, text_params):
         S_WIDTH, S_HEIGHT = surface.get_width(), surface.get_height()
         timer_text = TextBox(
             text=f"{1+int(self.timer.get_remaining_time())}",
             x=S_WIDTH * 0.8,
             y=S_HEIGHT * 0.4,
-            font_size=font_size,
-            **self.rect_params,
+            **text_params,
         )
         timer_text.draw(surface)
 
@@ -144,8 +147,9 @@ class GameScreen(Screen):
             y=C_Y,
             width=C_WIDTH,
             height=C_HEIGHT,
-            background_color=rgb("black"),
+            background_color="black",
             border_width=3,
+            **self.rect_params,
         )
         rect_render.draw(surface)
 
@@ -158,6 +162,7 @@ class GameScreen(Screen):
             "height": C_HEIGHT,
             "x": C_X,
             "y": C_Y,
+            **self.rect_params,
         }
         card_render = Card(
             **card_params,
@@ -172,8 +177,9 @@ class GameScreen(Screen):
             y=200,
             width=50,
             height=50,
-            background_color=rgb(top_card.get_color()),
+            background_color=top_card.get_color(),
             border_width=3,
+            **self.rect_params,
         )
         rect_render.draw(surface)
         pass
@@ -184,10 +190,11 @@ class GameScreen(Screen):
             y=270,
             width=70,
             height=40,
-            background_color=rgb("white"),
+            background_color="white",
             text="UNO",
             font_size=20,
-            text_color=rgb("black"),
+            text_color="black",
+            **self.rect_params,
         )
         uno_button.draw(surface)
         pass

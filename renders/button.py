@@ -1,44 +1,46 @@
-import pygame
-from utils.fonts import get_text_surface
 from utils.color_conversion import rgb
-from renders.rect import Rect
-from utils.constants import BUTTON as B, SIZE_RATIO
+from renders.text_box import TextBox
+from utils.constants import BUTTON as B
 
 
-class Button(Rect):
+class Button(TextBox):
     def __init__(
         self,
         x,
         y,
+        screen_size,
+        color_blind,
         text="",
+        reposition=True,
+        resize=True,
         width=B.WIDTH,
         height=B.HEIGHT,
         font_size=B.FONT_SIZE,
-        background_color=B.COLOR,
         text_color=B.TEXT_COLOR,
-        screen_size="medium",
-        color_blind=False,
+        background_color=B.COLOR,
+        border_color=B.BORDER_COLOR,
+        border_width=0,
         hover_background_color=B.HOVER_COLOR,
         hover_text_color=B.TEXT_HOVER_COLOR,
         select_background_color=B.SELECT_COLOR,
         select_text_color=B.TEXT_SELECT_COLOR,
     ):
         super().__init__(
-            x=x,
-            y=y,
-            width=width,
-            height=height,
-            background_color=background_color,
-            screen_size=screen_size,
-            color_blind=color_blind,
+            x,
+            y,
+            text,
+            screen_size,
+            color_blind,
+            reposition,
+            resize,
+            width,
+            height,
+            font_size,
+            text_color,
+            background_color,
+            border_color,
+            border_width,
         )
-        self.text = text
-        self.font_size = font_size * SIZE_RATIO[screen_size]
-        self.text_color = rgb(text_color, color_blind)
-        temp_text_surface = get_text_surface(self.text, self.font_size, self.text_color)
-        self.width = max(self.width, temp_text_surface.get_width())
-        self.height = max(self.height, temp_text_surface.get_height())
-        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
         self.origin_background_color = self.background_color
         self.origin_text_color = self.text_color
         self.hover_background_color = rgb(hover_background_color, color_blind)
@@ -51,16 +53,6 @@ class Button(Rect):
 
     def draw(self, screen):
         super().draw(screen)
-        text_surface = get_text_surface(self.text, self.font_size, self.text_color)
-        screen.blit(
-            text_surface,
-            (
-                (
-                    self.x + (self.width - text_surface.get_width()) / 2,
-                    self.y + (self.height - text_surface.get_height()) / 2,
-                ),
-            ),
-        )
 
     def update(self):
         super().update()

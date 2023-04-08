@@ -59,6 +59,7 @@ class CARD:
     TEXT_COLOR = "black"
     BACKGROUND_COLOR = "black"
 
+
 # Button properties
 class BUTTON:
     WIDTH = 180
@@ -70,11 +71,13 @@ class BUTTON:
     TEXT_COLOR = "green"
     TEXT_HOVER_COLOR = "black"
     TEXT_SELECT_COLOR = "white"
+    BORDER_COLOR = "white"
 
 
 class TEXTBOX:
     FONT_SIZE = 60
     TEXT_COLOR = "white"
+    BORDER_COLOR = "white"
 
 
 # Directories
