@@ -5,17 +5,16 @@ from renders.card import Card
 from renders.text_box import TextBox
 from renders.button import Button
 from renders.rect import Rect
-from utils.timer import Timer
+from utils.timer import Timer, wait
 from utils.color_conversion import rgb
 
 
 class GameScreen(Screen):
     def __init__(self, screen, options):
         super().__init__(screen, options)
-        self.com_players_number = 5
+        self.com_players_number = 3
         self.max_players = 6
-        self.game = UnoGame(player_number=self.com_players_number + 1)
-        self.timer = Timer()
+        self.game = UnoGame(human_number=1, com_number=self.com_players_number)
         self.player = self.game.get_player()
         self.coms = self.game.get_com_players()
         self.player_hand_surface = None
@@ -37,6 +36,11 @@ class GameScreen(Screen):
         self.surfaces = []
         self.create_surfaces()
 
+        # handling turns
+        self.turn_timer = Timer()
+        self.player_turn_time, self.com_turn_time = 3, 2
+        self.turn_ended = False
+
     def create_surfaces(self):
         self.player_hand_surface = pygame.Surface(
             self.player_hand_surface_const["size"]
@@ -50,6 +54,8 @@ class GameScreen(Screen):
             self.player_hand_surface,
             self.board_surface,
         ] + self.com_hand_surfaces
+
+    # region Draw functions
 
     ## Draw player functions
 
@@ -80,7 +86,7 @@ class GameScreen(Screen):
         self.draw_player_hand(surface, player.hand, is_player, card_params, C_X, C_GAP)
         self.draw_player_card_number(surface, len(player.hand), text_params)
         if player.is_turn:
-            self.draw_timer(surface, text_params)
+            self.draw_turn_timer(surface, text_params)
         pass
 
     def draw_player_name(self, surface, player_name, text_params):
@@ -120,10 +126,10 @@ class GameScreen(Screen):
         )
         card_number_text.draw(surface)
 
-    def draw_timer(self, surface, text_params):
+    def draw_turn_timer(self, surface, text_params):
         S_WIDTH, S_HEIGHT = surface.get_width(), surface.get_height()
         timer_text = TextBox(
-            text=f"{1+int(self.timer.get_remaining_time())}",
+            text=f"{1+int(self.turn_timer.get_remaining_time())}",
             x=S_WIDTH * 0.8,
             y=S_HEIGHT * 0.4,
             **text_params,
@@ -232,25 +238,43 @@ class GameScreen(Screen):
         self.draw_board()
         self.draw_players()
 
+    # endregion
+
+    # region Events
     def process_events(self):
         super().process_events()
         # handle player turn timer
-        if self.timer.is_finished():
-            self.next_turn()
-
-    def next_turn(self):
-        self.game.next_turn()
-        self.timer.reset()
-        self.timer.start()
+        if self.turn_timer.is_finished():
+            self.game.turn_time_out()
+            self.turn_ended = True
+        if self.turn_ended:
+            self.end_turn()
 
     def start_game(self):
         self.game.start_game()
         self.player_turn()
 
     def player_turn(self):
-        self.timer.set_timer(10)
-        self.timer.start()
+        self.turn_timer.set_timer(self.player_turn_time)
+        self.turn_timer.start()
+
+    def com_turn(self):
+        self.turn_timer.set_timer(self.com_turn_time)
+        self.turn_timer.start()
+
+    def card_draw(self):
+        pass
+
+    def end_turn(self):
+        self.game.next_turn()
+        if self.game.get_current_player() == self.player:
+            self.player_turn()
+        else:
+            self.com_turn()
+        self.turn_ended = False
 
     def main_loop(self):
         self.start_game()
         super().main_loop()
+
+    # endregion

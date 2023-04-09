@@ -101,6 +101,5 @@ class Screen:
         try:
             self.main_loop()
         except Exception as e:
-            print(e)
             traceback.print_exc()
             self.quit()
