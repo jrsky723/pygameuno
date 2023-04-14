@@ -38,8 +38,12 @@ class GameScreen(Screen):
 
         # handling turns
         self.turn_timer = Timer()
-        self.player_turn_time, self.com_turn_time = 3, 2
+        self.player_turn_time, self.com_turn_time = 3, 3
         self.turn_ended = False
+
+        # handling game event
+        # TODO: show direction in screen
+        self.direction = self.game.get_direction()
 
     def create_surfaces(self):
         self.player_hand_surface = pygame.Surface(
@@ -104,16 +108,22 @@ class GameScreen(Screen):
     ):
         for i, card in enumerate(player_hand):
             card_params["x"] = C_X + i * C_GAP
-            if is_player:
-                card_render = Card(
-                    **card_params,
-                    color=card.get_color(),
-                    text=card.get_abb(),
-                )
-            else:
-                card_render = Rect(
-                    **card_params, background_color="black", border_width=3
-                )
+            # if is_player:
+            #     card_render = Card(
+            #         **card_params,
+            #         color=card.get_color(),
+            #         text=card.get_abb(),
+            #     )
+            # else:
+            #     card_render = Rect(
+            #         **card_params, background_color="black", border_width=3
+            #     )
+            # TODO : fix card rendering for coms this is for test
+            card_render = Card(
+                **card_params,
+                color=card.get_color(),
+                text=card.get_abb(),
+            )
             card_render.draw(surface)
 
     def draw_player_card_number(self, surface, card_number, text_params):

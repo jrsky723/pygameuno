@@ -73,6 +73,9 @@ class UnoGame:
     # endregion
 
     # region get functions
+    def get_direction(self):
+        return self.direction
+
     def get_top_card(self):
         return self.top_card
 
@@ -102,7 +105,9 @@ class UnoGame:
             card = self.deck.pop(0)
             player.add_card(card)
 
-    def _play_card(self, card):
+    def _play_card(self, player, card):
+        if card.type is "action":
+            self._handle_action(player, card)
         self.discard_pile.append(card)
         self.top_card = card
 
@@ -120,54 +125,61 @@ class UnoGame:
         self.current_player_idx %= self.player_number
         print("Current player: " + self.players[self.current_player_idx].name)
 
-    def auto_turn(self):
-        com_player = self.get_current_player()
+    # automatically play card, if player can't play, draw card
+    def auto_turn(self, com_player):
         if not com_player.can_play(self.top_card):
             self._draw_card(com_player)
             return
         card = com_player.auto_play(self.top_card)
-        self._play_card(card)
+        self._play_card(com_player, card)
 
     def turn_time_out(self):
         player = self.get_current_player()
-        self.auto_turn()
+        self.auto_turn(player)
         # if player is human, draw card
         # if player.is_human():
         #     self._draw_card(player)
         # else:
-        #     self.com_turn()
+        #     self.auto_ture()
 
     # endregion
 
     # region Card Functions
 
-    # TODO: add card action
-
-    # if card.type is "action":
-    #     self._handle_action(card)
-
-    def _handle_action(self, card):
+    def _handle_action(self, player, card):
         if card.value == "reverse":
             self.direction *= -1
         elif card.value == "skip":
             self.next_turn()
         elif card.value == "draw2":
             self._draw_card(self.get_next_player(), 2)
+            self.next_turn()
         elif card.value == "draw4":
             self._draw_card(self.get_next_player(), 4)
+            self.next_turn()
         elif card.value == "reload":
-            self._reload_hand(self.get_current_player())
+            self._reload_hand(player)
         elif card.value == "change_color":
-            self._change_color()
+            self._change_color(player)
         elif card.value == "bonus":
             return
-        self.next_turn()
 
-    def _change_color(self):
-        self.top_card.color = random.choice(COLORS)
+    # change color of top card to color which is most in player's hand
+    def _change_color(self, player):
+        color_count = {}
+        for color in COLORS:
+            color_count[color] = 0
+        for card in player.hand:
+            if card.color != "black":
+                color_count[card.color] += 1
+        self.top_card.color = max(color_count, key=color_count.get)
 
-    # reload player's hand
-    # def _reload_hand(self, player):
-    #     for i, card in enumerate(self.deck):
+    # reload player's hand put all card on deck and shuffle then draw the same number of card
+    def _reload_hand(self, player):
+        hand_size = len(player.hand)
+        self.deck.extend(player.hand)
+        player.hand = []
+        self._shuffle_deck()
+        self._draw_card(player, hand_size)
 
     # endregion
