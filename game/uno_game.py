@@ -50,8 +50,9 @@ class UnoGame:
         return cards
 
     def _shuffle_deck(self):
-        random.shuffle(self.deck)
+        random.shuffle(self.deck)        
 
+    # Deal 7 cards to each player in turns.
     def _deal_cards(self, num_cards=7):
         for i in range(num_cards):
             for player in self.players:
@@ -60,12 +61,14 @@ class UnoGame:
                 card = self.deck.pop(0)
                 player.add_card(card)
 
+    # Add players to the game
     def _add_players(self):
         for i in range(self.human_number):
             self.players.append(UnoPlayer(name="Player " + str(i + 1)))
         for i in range(self.com_number):
             self.players.append(UnoComPlayer(name="Computer " + str(i + 1)))
 
+    # Set the top card from the deck
     def _set_top_card(self):
         self.discard_pile.append(self.deck.pop(0))
         self.top_card = self.discard_pile[-1]

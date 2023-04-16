@@ -1,48 +1,40 @@
-## UNO GAME with python
+# UNO Game With Python
+-------------------------
+## description
+- UNO game made with Pygame library
 
-File Structure
+Start Menu Screen
+-------------------------
+![StartMenuScreen](https://user-images.githubusercontent.com/42289726/232302391-fa6d41cc-36e8-4ea2-b11d-0dfae2ec1a31.png)
+-------------------------
 
-- pygameuno/
+## 3 Kind of Screen size
+-------------------------
 
-  - Readme.md
-  - .gitignore
-  - main.py
-  - assets/
-    - fonts
-      - ComicSansMS3.ttf
-  - images/
-  - sounds/
-  - game/
+### For example, use the setting menu screen
 
-    - card.py
-    - deck.py
-    - player.py
-    - uno.py
+- small size
+<img src=https://user-images.githubusercontent.com/42289726/232302423-58b1ca85-0c84-400f-9f1e-beaf1add180c.png width="480" height="270"/>
 
-  - renders/
 
-    - card.py
-    - button.py
-    - text_box.py
-    - rect.py
 
-  - screens/
+- medium size
+<img src=https://user-images.githubusercontent.com/42289726/232302427-021ac335-187b-43e5-a417-4a5d2681fb34.png width="640" height="360"/>
 
-    - menu
-      - end.py
-      - key_setting.py
-      - options.py
-      - start.py
-    - game.py
-    - menu.py
-    - screen.py
 
-  - utils/
 
-    - constants.py
-    - color_conversion.py
-    - fonts.py
-    - options.py
-    - test.py
+- large size
+<img src=https://user-images.githubusercontent.com/42289726/232302429-f0a01e5b-ce5b-4963-9eaf-04d732226d34.png width="800" height="450"/>
 
-  - tests/
+
+--------------------------
+
+## Key Setting Menu
+------------------------
+
+- Key Setting Menu Screen
+![KeySetting](https://user-images.githubusercontent.com/42289726/232302434-2f1acec4-c207-493d-b3a7-f1d119869c3c.png)
+
+
+- Key setting Example
+![Pygame Uno 2023-04-16 19-10-31](https://user-images.githubusercontent.com/42289726/232302150-a034bfde-9a7a-48ac-afa0-6bb3a3c55b96.gif)

@@ -6,7 +6,8 @@ class UnoPlayer:
 
     def add_card(self, card):
         self.hand.append(card)
-
+        
+    # Returns TRUE/FALSE by checking if there is a card that can be played
     def can_play(self, top_card):
         for c in self.hand:
             if (

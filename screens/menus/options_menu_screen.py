@@ -27,7 +27,7 @@ class OptionsMenuScreen(MenuScreen):
         ######### SCREEN SIZE BUTTONS #########
         button_params = self.rect_params | {"width": 120, "height": 50, "font_size": 30}
         B_X, B_Y, B_GAP = 800, T_Y, 120
-
+        
         screen_size_params = button_params | {"y": B_Y, "font_size": 20}
         self.screen_size_buttons = [
             Button(x=B_X, text="small", **screen_size_params),
