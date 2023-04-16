@@ -58,6 +58,7 @@ class CARD:
     FONT_SIZE = 38
     TEXT_COLOR = "black"
     BACKGROUND_COLOR = "black"
+    BACK_COLOR = "black"
 
 
 # Button properties

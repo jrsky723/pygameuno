@@ -1,8 +1,25 @@
 class UnoPlayer:
+    id_counter = 0
+
     def __init__(self, name):
         self.name = name
+        self.id = UnoPlayer.id_counter
+        UnoPlayer.id_counter += 1
         self.hand = []
         self.is_turn = False
+        self.next_card_pos = (0, 0)
+
+    def set_next_card_pos(self, pos):
+        self.next_card_pos = pos
+
+    def get_next_card_pos(self):
+        return self.next_card_pos
+
+    def get_id(self):
+        return self.id
+
+    def get_hand(self):
+        return self.hand
 
     def add_card(self, card):
         self.hand.append(card)

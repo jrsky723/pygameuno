@@ -18,15 +18,12 @@ class UnoGame:
         self.discard_pile = []
         self.current_player_idx = 0
         self.direction = 1
-        self.top_card = None
         self.game_ended = False
+        self.animation_infos = []
         self._init_game()
 
     def _init_game(self):
         self._add_players()
-        self._shuffle_deck()
-        self._deal_cards()
-        self._set_top_card()
 
     # region Initializing Game Functions
 
@@ -50,16 +47,13 @@ class UnoGame:
         return cards
 
     def _shuffle_deck(self):
-        random.shuffle(self.deck)        
+        random.shuffle(self.deck)
 
     # Deal 7 cards to each player in turns.
     def _deal_cards(self, num_cards=7):
         for i in range(num_cards):
             for player in self.players:
-                if len(self.deck) == 0:
-                    return
-                card = self.deck.pop(0)
-                player.add_card(card)
+                self._draw_card(player)
 
     # Add players to the game
     def _add_players(self):
@@ -68,19 +62,23 @@ class UnoGame:
         for i in range(self.com_number):
             self.players.append(UnoComPlayer(name="Computer " + str(i + 1)))
 
-    # Set the top card from the deck
-    def _set_top_card(self):
-        self.discard_pile.append(self.deck.pop(0))
-        self.top_card = self.discard_pile[-1]
+    def _set_top_discard_card(self):
+        self.add_card_move_animation(self.deck.pop(0), src="deck", dest="discard")
 
     # endregion
 
     # region get functions
+    def get_animation_infos(self):
+        return self.animation_infos
+
     def get_direction(self):
         return self.direction
 
-    def get_top_card(self):
-        return self.top_card
+    def get_top_discard_card(self):
+        return self.discard_pile[-1] if len(self.discard_pile) > 0 else None
+
+    def get_top_deck_card(self):
+        return self.deck[-1]
 
     def get_com_players(self):
         return self.players[self.human_number :]
@@ -96,8 +94,17 @@ class UnoGame:
             (self.current_player_idx + self.direction) % self.player_number
         ]
 
+    def get_deck(self):
+        return self.deck
+
     # endregion
 
+    # region set functions
+
+    def set_animation_infos(self, animation_infos):
+        self.animation_infos = animation_infos
+
+    # endregion
     # region game play functions
 
     def _draw_card(self, player, draw_number=1):
@@ -106,13 +113,16 @@ class UnoGame:
                 self.game_ended = True
                 return
             card = self.deck.pop(0)
-            player.add_card(card)
+            self.add_card_move_animation(
+                card, src="deck", dest=f"player_{player.get_id()}"
+            )
 
     def _play_card(self, player, card):
         if card.type is "action":
             self._handle_action(player, card)
-        self.discard_pile.append(card)
-        self.top_card = card
+        self.add_card_move_animation(
+            card, src=f"player_{player.get_id()}", dest="discard"
+        )
 
     # endregion
 
@@ -120,20 +130,22 @@ class UnoGame:
 
     def start_game(self):
         self.players[self.current_player_idx].set_is_turn(True)
+        self._shuffle_deck()
+        self._deal_cards()
+        self._set_top_discard_card()
 
     def next_turn(self):
         self.get_current_player().set_is_turn(False)
         self.get_next_player().set_is_turn(True)
         self.current_player_idx += self.direction + self.player_number
         self.current_player_idx %= self.player_number
-        print("Current player: " + self.players[self.current_player_idx].name)
 
     # automatically play card, if player can't play, draw card
     def auto_turn(self, com_player):
-        if not com_player.can_play(self.top_card):
+        if not com_player.can_play(self.get_top_discard_card()):
             self._draw_card(com_player)
             return
-        card = com_player.auto_play(self.top_card)
+        card = com_player.auto_play(self.get_top_discard_card())
         self._play_card(com_player, card)
 
     def turn_time_out(self):
@@ -175,14 +187,41 @@ class UnoGame:
         for card in player.hand:
             if card.color != "black":
                 color_count[card.color] += 1
-        self.top_card.color = max(color_count, key=color_count.get)
+        self.top_discard_card.color = max(color_count, key=color_count.get)
 
     # reload player's hand put all card on deck and shuffle then draw the same number of card
     def _reload_hand(self, player):
         hand_size = len(player.hand)
-        self.deck.extend(player.hand)
+        for card in player.hand:
+            self.add_card_move_animation(
+                card, src=f"player_{player.get_id()}", dest="deck"
+            )
         player.hand = []
         self._shuffle_deck()
         self._draw_card(player, hand_size)
 
     # endregion
+
+    # # region Animation Functions
+    def add_card_move_animation(self, card, src, dest):
+        self.animation_infos.append(
+            {
+                "type": "card_move",
+                "card": card,
+                "src": src,
+                "dest": dest,
+            }
+        )
+
+    def update_by_animtaion_info(self, info):
+        if info["type"] == "card_move":
+            card, dest = info["card"], info["dest"]
+            if dest == "deck":
+                self.deck.append(card)
+            elif dest == "discard":
+                self.discard_pile.append(card)
+            else:  # dest == "player_#"
+                player_id = int(dest.split("_")[1])
+                self.players[player_id].add_card(card)
+
+    # # endregion

@@ -19,6 +19,7 @@ class Rect:
         border_color="white",  # inner border color
         border_width=0,
     ):
+        self.color_blind = color_blind
         if x == "center":
             x = (S.WIDTH_BASE - width) / 2
         if y == "center":
