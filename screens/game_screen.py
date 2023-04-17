@@ -8,6 +8,7 @@ from renders.rect import Rect
 from utils.timer import Timer
 from utils.color_conversion import rgb
 from animations.move_animation import MoveAnimation
+from utils.constants import SCREEN as S, SIZE_RATIO as SR
 import copy
 
 
@@ -39,6 +40,9 @@ class GameScreen(Screen):
         self.pos = {
             "discard": (500, 200),
             "deck": (300, 200),
+            "player_hand": (0, S.HEIGHT_BASE * (7 / 10)),
+            "com_hand": (S.WIDTH_BASE * (3 / 4), 0),
+            "com_hand_gap": (S.HEIGHT_BASE / 5),
         }
         self.deck_render = Rect(
             x=self.pos["deck"][0],
@@ -51,12 +55,15 @@ class GameScreen(Screen):
         )
         self.card_renders = []
         self.animation_card_renders = []
+        # TODO: for player input cards only
+        #  hover, click
+        self.player_hand_card_renders = []
         self.create_surfaces()
 
         # handling turns
         self.turn_started = False
         self.turn_timer = Timer()
-        self.player_turn_time, self.com_turn_time = 3, 3
+        self.player_turn_time, self.com_turn_time = 2, 2
         self.turn_ended = False
 
         # handling game event
@@ -111,19 +118,22 @@ class GameScreen(Screen):
                 card=card,
             )
             self.card_renders.append(card_render)
-        player.set_next_card_pos((C_X + (len(player_hand)) * C_GAP, C_Y))
+        next_card_pos = (C_X + (len(player_hand)) * C_GAP, C_Y)
+        next_card_pos_repositioned = tuple(
+            x * SR[self.screen_size] for x in next_card_pos
+        )
+        player.set_next_card_pos(next_card_pos_repositioned)
 
     def create_card_renders(self):
         self.card_renders = []
         # player hand
-        self.create_hand_cards(self.player_hand_surface_const["pos"], self.player, True)
+        self.create_hand_cards(self.pos["player_hand"], self.player, True)
         # com hands
         for i, com in enumerate(self.coms):
             self.create_hand_cards(
                 (
-                    self.com_hand_surface_const["pos"][0],
-                    self.com_hand_surface_const["pos"][1]
-                    + i * self.com_hand_surface_const["gap"],
+                    self.pos["com_hand"][0],
+                    self.pos["com_hand"][1] + i * self.pos["com_hand_gap"],
                 ),
                 com,
                 False,
@@ -350,7 +360,9 @@ class GameScreen(Screen):
 
     def update_animations_finished(self):
         animations = []
-        for animation in self.animations:
+        for i, animation in enumerate(self.animations):
+            if i is not 0:
+                animation.set_start_time(self.animations[i - 1].get_start_time())
             if animation.move_info["type"] == "card_move":
                 self.card_move_animation_update(animation)
             animation.update()
@@ -365,7 +377,7 @@ class GameScreen(Screen):
         animation.set_dest_pos(self.find_dest_pos(info["dest"]))
 
     def add_game_animations(self):
-        for i, info in enumerate(self.game.get_animation_infos()):
+        for info in self.game.get_animation_infos():
             if info["type"] == "card_move":
                 src_pos = self.find_card_pos(info["card"])
                 dest_pos = self.find_dest_pos(info["dest"])
@@ -375,9 +387,9 @@ class GameScreen(Screen):
                         obj=obj,
                         src_pos=src_pos,
                         dest_pos=dest_pos,
-                        duration=0.4,
+                        duration=info["duration"],
+                        delay=info["delay"],
                         move_info=info,
-                        delay=i * 0.1,
                     )
                 )
         self.game.set_animation_infos([])
@@ -396,11 +408,15 @@ class GameScreen(Screen):
 
     def find_dest_pos(self, dest):
         if dest == "deck":
-            return self.pos["deck"]
+            return self.update_pos(self.pos["deck"])
         elif dest == "discard":
-            return self.pos["discard"]
+            return self.update_pos(self.pos["discard"])
         elif dest.startswith("player"):
             if dest == "player_0":
                 return self.player.get_next_card_pos()
             else:
                 return self.coms[int(dest[-1]) - 1].get_next_card_pos()
+
+    def update_pos(self, pos):
+        result = tuple(x * SR[self.screen_size] for x in pos)
+        return result

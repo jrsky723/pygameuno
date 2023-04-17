@@ -43,7 +43,6 @@ class UnoGame:
         # Add wild cards
         for value in WILD_ACTION_VALUES:
             cards.append(UnoCard(type="action", color="black", value=value))
-
         return cards
 
     def _shuffle_deck(self):
@@ -53,7 +52,13 @@ class UnoGame:
     def _deal_cards(self, num_cards=7):
         for i in range(num_cards):
             for player in self.players:
-                self._draw_card(player)
+                self.add_card_move_animation(
+                    self.deck.pop(0),
+                    src="deck",
+                    dest=f"player_{player.get_id()}",
+                    delay=0.1,
+                    duration=0.5,
+                )
 
     # Add players to the game
     def _add_players(self):
@@ -94,6 +99,11 @@ class UnoGame:
             (self.current_player_idx + self.direction) % self.player_number
         ]
 
+    def get_prev_player(self):
+        return self.players[
+            (self.current_player_idx - self.direction) % self.player_number
+        ]
+
     def get_deck(self):
         return self.deck
 
@@ -118,11 +128,11 @@ class UnoGame:
             )
 
     def _play_card(self, player, card):
-        if card.type is "action":
-            self._handle_action(player, card)
         self.add_card_move_animation(
             card, src=f"player_{player.get_id()}", dest="discard"
         )
+        if card.type is "action":
+            self._handle_action(player, card)
 
     # endregion
 
@@ -138,6 +148,12 @@ class UnoGame:
         self.get_current_player().set_is_turn(False)
         self.get_next_player().set_is_turn(True)
         self.current_player_idx += self.direction + self.player_number
+        self.current_player_idx %= self.player_number
+
+    def prev_turn(self):
+        self.get_current_player().set_is_turn(False)
+        self.get_prev_player().set_is_turn(True)
+        self.current_player_idx -= self.direction + self.player_number
         self.current_player_idx %= self.player_number
 
     # automatically play card, if player can't play, draw card
@@ -176,8 +192,8 @@ class UnoGame:
             self._reload_hand(player)
         elif card.value == "change_color":
             self._change_color(player)
-        elif card.value == "bonus":
-            return
+        elif card.value == "bonus":  # one more current player's turn
+            self.prev_turn()
 
     # change color of top card to color which is most in player's hand
     def _change_color(self, player):
@@ -203,13 +219,15 @@ class UnoGame:
     # endregion
 
     # # region Animation Functions
-    def add_card_move_animation(self, card, src, dest):
+    def add_card_move_animation(self, card, src, dest, delay=0.1, duration=0.3):
         self.animation_infos.append(
             {
                 "type": "card_move",
                 "card": card,
                 "src": src,
                 "dest": dest,
+                "delay": delay,
+                "duration": duration,
             }
         )
 

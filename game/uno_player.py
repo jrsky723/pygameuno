@@ -23,14 +23,15 @@ class UnoPlayer:
 
     def add_card(self, card):
         self.hand.append(card)
-        
+
     # Returns TRUE/FALSE by checking if there is a card that can be played
     def can_play(self, top_card):
         for c in self.hand:
             if (
-                c.type == "wild"
-                or c.color == top_card.color
+                top_card.color == "black"
+                or c.color == "black"
                 or c.value == top_card.value
+                or c.color == top_card.color
             ):
                 return True
         return False
@@ -47,9 +48,10 @@ class UnoPlayer:
     def auto_play(self, top_card):
         for card in self.hand:
             if (
-                card.type == "wild"
-                or card.color == top_card.color
+                top_card.color == "black"
+                or card.color == "black"
                 or card.value == top_card.value
+                or card.color == top_card.color
             ):
                 self.play_card(card)
                 return card

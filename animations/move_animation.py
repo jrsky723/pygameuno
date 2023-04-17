@@ -2,8 +2,9 @@ from animations.animation import Animation
 
 
 class MoveAnimation(Animation):
-    def __init__(self, obj, src_pos, dest_pos, duration, move_info, delay=0):
-        super().__init__(obj, duration, delay)
+    def __init__(self, obj, src_pos, dest_pos, delay, duration, move_info):
+        super().__init__(obj, delay, duration)
+        # position is a tuple of (x, y) coordinates
         self.src_pos = src_pos
         self.dest_pos = dest_pos
         self.move_info = move_info
