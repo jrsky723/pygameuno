@@ -1,6 +1,6 @@
 import pygame
 import traceback
-from utils.constants import SCREEN as S, BACKGROUND_MUSIC
+from utils.constants import SCREEN as S
 from utils.color_conversion import rgb
 
 
@@ -23,6 +23,7 @@ class Screen:
         self.background_music_volume = self.sound["volume"] * self.sound["music"] / 100
         self.sound_effects_volume = self.sound["volume"] * self.sound["effects"] / 100
         pygame.mixer.music.set_volume(self.background_music_volume)
+        
 
     def move_up(self):
         pass

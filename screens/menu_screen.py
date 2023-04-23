@@ -1,5 +1,5 @@
 import pygame
-from utils.constants import SCREEN as S
+from utils.constants import SCREEN as S, SOUND
 from screens.screen import Screen
 
 
@@ -15,6 +15,8 @@ class MenuScreen(Screen):
         self.button_sections, self.texts = [], []
         self.hovered_button = None
         self.button_key_pos = None
+        self.button_click_sound = pygame.mixer.Sound(SOUND.BUTTON_CLICK)
+        self.button_click_sound.set_volume(self.sound_effects_volume)
 
     def find_hovered_button(self, pos):
         for i, section in enumerate(self.button_sections):
@@ -107,7 +109,10 @@ class MenuScreen(Screen):
         button.unhover()
 
     def button_click_down(self, button):
-        button.click() if button else None
+        if button:
+            button.click()
+            self.button_click_sound.play()
+        # button.click() if button else None5
 
     def button_click_up(self, button):
         if button is not None:

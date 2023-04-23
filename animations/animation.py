@@ -9,6 +9,7 @@ class Animation:  # duration is in seconds
         self.duration = duration
         self.elapsed_time = 0
         self.progress = 0
+        self.sound_played = False
 
     def update(self):
         if self.start_time is None:
@@ -33,5 +34,11 @@ class Animation:  # duration is in seconds
     def set_start_time(self, start_time):
         self.start_time = start_time + self.delay
 
-    def isDelayFinished(self):
+    def is_delay_finished(self):
         return self.elapsed_time >= 0
+
+    def get_sound_played(self):
+        return self.sound_played
+
+    def set_sound_played(self, sound_played):
+        self.sound_played = sound_played

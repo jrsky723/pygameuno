@@ -116,6 +116,7 @@ class KeySettingMenuScreen(MenuScreen):
         self.selected_button.text = pygame.key.name(event.key)
 
     def button_click_down(self, button):
+        super().button_click_down(button)
         if button is None or button.text in ["SAVE", "BACK"]:
             return
         if self.selected_button is not None:

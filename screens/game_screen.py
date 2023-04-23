@@ -8,7 +8,7 @@ from renders.rect import Rect
 from utils.timer import Timer
 from utils.color_conversion import rgb
 from animations.move_animation import MoveAnimation
-from utils.constants import SCREEN as S, SIZE_RATIO as SR
+from utils.constants import SCREEN as S, SIZE_RATIO as SR, SOUND
 import copy
 
 
@@ -70,6 +70,10 @@ class GameScreen(Screen):
         # TODO: show direction in screen
         self.direction = self.game.get_direction()
         self.animations = []
+
+        # sound
+        self.card_move_sound = pygame.mixer.Sound(SOUND.CARD_MOVE)
+        self.card_move_sound.set_volume(self.sound_effects_volume)
 
     # region Create functions
 
@@ -372,9 +376,12 @@ class GameScreen(Screen):
         for i, animation in enumerate(self.animations):
             if i is not 0:
                 animation.set_start_time(self.animations[i - 1].get_start_time())
-            if animation.move_info["type"] == "card_move":
-                self.card_move_animation_update(animation)
+            if animation.__class__.__name__ == "MoveAnimation":
+                if animation.move_info["type"] == "card_move":
+                    self.card_move_animation_update(animation)
             animation.update()
+            if animation.is_delay_finished() and not animation.get_sound_played():
+                self.play_animation_sound(animation)
             if animation.is_finished():
                 self.game.update_by_animtaion_info(animation.move_info)
             else:
@@ -453,3 +460,10 @@ class GameScreen(Screen):
 
     def game_over(self):
         return
+
+    # Sound
+    def play_animation_sound(self, animation):
+        animation.set_sound_played(True)
+        # CHECK ANIMATION CLASS NAME
+        if animation.__class__.__name__ == "MoveAnimation":
+            self.card_move_sound.play()

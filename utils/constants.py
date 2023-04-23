@@ -19,6 +19,12 @@ class SCREEN:
     FONT_SIZE = 30
 
 
+class SOUND:
+    # SOUND
+    BUTTON_CLICK = "assets/sounds/button_click.mp3"
+    CARD_MOVE = "assets/sounds/card_move_sound.mp3"
+
+
 # Colors
 COLORS_DICT = {
     "black": (0, 0, 0),

@@ -80,6 +80,7 @@ class SoundSettingMenuScreen(MenuScreen):
         self.button_sections.append(self.save_back_buttons)
 
     def button_click_down(self, button):
+        super().button_click_down(button)
         if button is None or button.text in ["SAVE", "BACK"]:
             return
         if button in self.game_volume_buttons:
