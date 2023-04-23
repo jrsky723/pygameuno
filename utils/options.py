@@ -3,8 +3,11 @@ import pygame
 
 default_options = {
     "screen_size": "medium",
-    "volume": 10,
-    "color_blind": False,
+    "sound": {
+        "volume": 10,
+        "music": 10,
+        "effects": 10,
+    },
     "key_bindings": {
         "up": "up",
         "down": "down",
@@ -12,6 +15,7 @@ default_options = {
         "right": "right",
         "return": "return",
     },
+    "color_blind": False,
 }
 
 
@@ -35,8 +39,9 @@ def validate_options(options):
 def validate_value(options):
     if options["screen_size"] not in ["small", "medium", "large"]:
         options["screen_size"] = "medium"
-    if options["volume"] not in range(0, 11):
-        options["volume"] = 10
+    for value in options["sound"]:
+        if options["sound"][value] not in range(0, 11):
+            options["sound"][value] = 10
     if options["color_blind"] not in [True, False]:
         options["color_blind"] = False
     for key in options["key_bindings"]:

@@ -1,6 +1,6 @@
 import pygame
 import traceback
-from utils.constants import SCREEN as S
+from utils.constants import SCREEN as S, BACKGROUND_MUSIC
 from utils.color_conversion import rgb
 
 
@@ -11,7 +11,7 @@ class Screen:
         self.screen_size = options["screen_size"]
         self.color_blind = options["color_blind"]
         self.key_bindings = options["key_bindings"]
-        self.volume = options["volume"]
+        self.sound = options["sound"]
         self.rect_params = {
             "screen_size": self.screen_size,
             "color_blind": self.color_blind,
@@ -20,6 +20,9 @@ class Screen:
         self.screen_height = screen.get_height()
         self.background_color = rgb(S.BACKGROUND_COLOR, self.color_blind)
         self.running = True
+        self.background_music_volume = self.sound["volume"] * self.sound["music"] / 100
+        self.sound_effects_volume = self.sound["volume"] * self.sound["effects"] / 100
+        pygame.mixer.music.set_volume(self.background_music_volume)
 
     def move_up(self):
         pass

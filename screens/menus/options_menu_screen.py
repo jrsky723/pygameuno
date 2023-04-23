@@ -1,6 +1,7 @@
 import pygame
 from screens.menu_screen import MenuScreen
 from screens.menus.key_setting_menu_screen import KeySettingMenuScreen
+from screens.menus.sound_setting_menu_screen import SoundSettingMenuScreen
 from renders.button import Button
 from renders.text_box import TextBox
 from utils.options import save_options_json
@@ -19,15 +20,15 @@ class OptionsMenuScreen(MenuScreen):
         text_params = self.rect_params | {"x": T_X, "font_size": 40}
         self.texts += [
             TextBox(y=T_Y, text="SCREEN SIZE", **text_params),
-            TextBox(y=T_Y + T_GAP, text="KEY SETTINGS", **text_params),
-            TextBox(y=T_Y + T_GAP * 2, text="COLOR BLIND", **text_params),
-            TextBox(y=T_Y + T_GAP * 3, text="VOLUME", **text_params),
+            TextBox(y=T_Y + T_GAP, text="SOUND SETTINGS", **text_params),
+            TextBox(y=T_Y + T_GAP * 2, text="KEY SETTINGS", **text_params),
+            TextBox(y=T_Y + T_GAP * 3, text="COLOR BLIND", **text_params),
         ]
 
         ######### SCREEN SIZE BUTTONS #########
         button_params = self.rect_params | {"width": 120, "height": 50, "font_size": 30}
         B_X, B_Y, B_GAP = 800, T_Y, 120
-        
+
         screen_size_params = button_params | {"y": B_Y, "font_size": 20}
         self.screen_size_buttons = [
             Button(x=B_X, text="small", **screen_size_params),
@@ -41,15 +42,21 @@ class OptionsMenuScreen(MenuScreen):
         self.screen_size_selected_button.select()
         self.button_sections.append(self.screen_size_buttons)
 
-        ########## KEY SETTINGS BUTTONS ##########
-        key_settings_params = button_params | {"y": B_Y + T_GAP, "width": 360}
+        ##########    SOUND BUTTONS   ##########
+        sound_settings_params = button_params | {"y": B_Y + T_GAP, "width": 360}
+        self.sound_settings_buttons = [
+            Button(x=B_X, text="SETTINGS", **sound_settings_params)
+        ]
+        self.button_sections.append(self.sound_settings_buttons)
+        ########## KEY SETTINGS BUTTON5S ##########
+        key_settings_params = button_params | {"y": B_Y + T_GAP * 2, "width": 360}
         self.key_settings_buttons = [
             Button(x=B_X, text="SETTINGS", **key_settings_params)
         ]
         self.button_sections.append(self.key_settings_buttons)
 
         ##########  COLOR BLIND BUTTONS ##########
-        color_blind_params = button_params | {"y": B_Y + T_GAP * 2}
+        color_blind_params = button_params | {"y": B_Y + T_GAP * 3}
         self.color_blind_buttons = [
             Button(x=B_X, text="OFF", **color_blind_params),
             Button(x=B_X + B_GAP * 2, text="ON", **color_blind_params),
@@ -58,14 +65,13 @@ class OptionsMenuScreen(MenuScreen):
         self.color_blind_selected_button.select()
         self.button_sections.append(self.color_blind_buttons)
 
-        ##########    VOLUME BUTTONS   ##########
-        volume_params = button_params | {"y": B_Y + T_GAP * 3}
-        self.volume_buttons = [
-            Button(x=B_X, text="-", **volume_params),
-            Button(x=B_X + B_GAP * 2, text="+", **volume_params),
-        ]
-        self.texts += [TextBox(x=B_X + B_GAP, text=str(self.volume), **volume_params)]
-        self.button_sections.append(self.volume_buttons)
+        # volume_params = button_params | {"y": B_Y + T_GAP * 3}
+        # self.volume_buttons = [
+        #     Button(x=B_X, text="-", **volume_params),
+        #     Button(x=B_X + B_GAP * 2, text="+", **volume_params),
+        # ]
+        # self.texts += [TextBox(x=B_X + B_GAP, text=str(self.volume), **volume_params)]
+        # self.button_sections.append(self.volume_buttons)
 
         ########    SAVE AND BACK BUTTONS   ########
         save_params = button_params | {"y": B_Y + T_GAP * 4, "width": 170}
@@ -90,18 +96,16 @@ class OptionsMenuScreen(MenuScreen):
             self.color_blind_selected_button.unselect()
             button.select()
             self.color_blind_selected_button = button
-        elif button.text == "+":
-            self.volume = min(self.volume + 1, 10)
-        elif button.text == "-":
-            self.volume = max(self.volume - 1, 0)
 
     def button_click_up(self, button):
         super().button_click_up(button)
         if button is not None:
             if button.text == "SAVE":
                 self.save_options()
-            elif button.text == "SETTINGS":
+            elif button in self.key_settings_buttons:
                 self.open_key_settings()
+            elif button in self.sound_settings_buttons:
+                self.open_sound_settings()
 
     def change_screen_size(self, new_screen_size):
         os.environ["SDL_VIDEO_CENTERED"] = "1"  # center window
@@ -110,9 +114,9 @@ class OptionsMenuScreen(MenuScreen):
     def save_options(self):
         new_options = {
             "screen_size": self.screen_size_selected_button.text,
-            "color_blind": self.color_blind_selected_button.text == "ON",
-            "volume": self.volume,
+            "sound": self.sound,
             "key_bindings": self.options["key_bindings"],
+            "color_blind": self.color_blind_selected_button.text == "ON",
         }
         self.options = new_options
         save_options_json(new_options)
@@ -125,10 +129,15 @@ class OptionsMenuScreen(MenuScreen):
         options = key_setting_menu.run()
         self.__init__(self.screen, options)
 
+    def open_sound_settings(self):
+        sound_setting_menu = SoundSettingMenuScreen(self.screen, self.options)
+        options = sound_setting_menu.run()
+        self.__init__(self.screen, options)
+
     # Update and run
     def update(self):
         super().update()
-        self.texts[5].text = str(self.volume)
+        # self.texts[5].text = str(self.volume)
 
     def run(self):
         super().run()

@@ -84,3 +84,6 @@ class TEXTBOX:
 # Directories
 ASSETS_DIR = os.path.join(os.path.dirname(__file__), "..", "assets")
 CARD_IMAGES_DIR = os.path.join(ASSETS_DIR, "card_images")
+
+# SOUND PATH
+BACKGROUND_MUSIC = "assets/sounds/sinnesloschen-beam.mp3"
