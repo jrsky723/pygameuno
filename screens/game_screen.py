@@ -139,14 +139,14 @@ class GameScreen(Screen):
                 False,
             )
         # top discard card
-        if self.game.get_top_discard_card() is not None:
+        if self.game.top_discard_card() is not None:
             top_discard_card_render = Card(
                 x=self.pos["discard"][0],
                 y=self.pos["discard"][1],
                 width=80,
                 height=110,
                 face_up=True,
-                card=self.game.get_top_discard_card(),
+                card=self.game.top_discard_card(),
                 **self.rect_params,
             )
             self.card_renders.append(top_discard_card_render)
@@ -211,7 +211,7 @@ class GameScreen(Screen):
 
     def draw_board(self):
         self.draw_top_discard_card_color(
-            self.board_surface, self.game.get_top_discard_card()
+            self.board_surface, self.game.top_discard_card()
         )
         self.draw_uno_button(self.board_surface)
         self.draw_deck(self.board_surface)
@@ -347,8 +347,17 @@ class GameScreen(Screen):
     # endregion
 
     def main_loop(self):
-        self.start_game()
+        if self.game.is_game_over():
+            self.game_over()
+            return
         super().main_loop()
+
+    def run(self):
+        try:
+            self.start_game()
+        except Exception as e:
+            print(e)
+        super().run()
 
     def update(self):
         super().update()
@@ -420,3 +429,27 @@ class GameScreen(Screen):
     def update_pos(self, pos):
         result = tuple(x * SR[self.screen_size] for x in pos)
         return result
+
+    def handle_game_events(self):
+        for info in self.game.get_game_event_infos():
+            if info["type"] == "game_over":
+                self.game_over()
+            elif info["type"] == "player_turn":
+                self.player_turn()
+            elif info["type"] == "com_turn":
+                self.com_turn()
+            elif info["type"] == "end_turn":
+                self.end_turn()
+            elif info["type"] == "color_change":
+                self.color_change(info["value"])
+        self.game.set_game_event_infos([])
+
+    def color_change(self, color):
+        # find top discard card render and change color
+        for card_render in self.card_renders:
+            if card_render.card == self.game.top_discard_card():
+                card_render.change_color(color)
+                break
+
+    def game_over(self):
+        return

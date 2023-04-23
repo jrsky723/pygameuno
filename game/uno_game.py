@@ -18,8 +18,11 @@ class UnoGame:
         self.discard_pile = []
         self.current_player_idx = 0
         self.direction = 1
-        self.game_ended = False
+        self.game_over = False
+        self.winner = None
         self.animation_infos = []
+        self.game_event_infos = []
+        self.selected_color = None
         self._init_game()
 
     def _init_game(self):
@@ -43,6 +46,7 @@ class UnoGame:
         # Add wild cards
         for value in WILD_ACTION_VALUES:
             cards.append(UnoCard(type="action", color="black", value=value))
+
         return cards
 
     def _shuffle_deck(self):
@@ -72,18 +76,23 @@ class UnoGame:
 
     # endregion
 
+    # region get card
+    def top_discard_card(self):
+        return self.discard_pile[-1] if len(self.discard_pile) > 0 else None
+
+    def top_deck_card(self):
+        return self.deck[-1] if len(self.deck) > 0 else None
+
+    # endregion
     # region get functions
     def get_animation_infos(self):
         return self.animation_infos
 
+    def get_game_event_infos(self):
+        return self.game_event_infos
+
     def get_direction(self):
         return self.direction
-
-    def get_top_discard_card(self):
-        return self.discard_pile[-1] if len(self.discard_pile) > 0 else None
-
-    def get_top_deck_card(self):
-        return self.deck[-1]
 
     def get_com_players(self):
         return self.players[self.human_number :]
@@ -107,6 +116,9 @@ class UnoGame:
     def get_deck(self):
         return self.deck
 
+    def is_game_over(self):
+        return self.game_over
+
     # endregion
 
     # region set functions
@@ -114,13 +126,19 @@ class UnoGame:
     def set_animation_infos(self, animation_infos):
         self.animation_infos = animation_infos
 
+    def set_game_event_infos(self, game_event_infos):
+        self.game_event_infos = game_event_infos
+
+    def set_selected_color(self, color):
+        self.selected_color = color
+
     # endregion
     # region game play functions
 
     def _draw_card(self, player, draw_number=1):
         for i in range(draw_number):
             if len(self.deck) == 0:
-                self.game_ended = True
+                self.game_over = True
                 return
             card = self.deck.pop(0)
             self.add_card_move_animation(
@@ -131,8 +149,11 @@ class UnoGame:
         self.add_card_move_animation(
             card, src=f"player_{player.get_id()}", dest="discard"
         )
-        if card.type is "action":
+        if card.type == "action":
             self._handle_action(player, card)
+        # if len(player.get_hand()) == 0:
+        #     self.game_over = True
+        #     self.winner = player
 
     # endregion
 
@@ -158,10 +179,10 @@ class UnoGame:
 
     # automatically play card, if player can't play, draw card
     def auto_turn(self, com_player):
-        if not com_player.can_play(self.get_top_discard_card()):
+        if not com_player.can_play(self.top_discard_card()):
             self._draw_card(com_player)
             return
-        card = com_player.auto_play(self.get_top_discard_card())
+        card = com_player.auto_play(self.top_discard_card())
         self._play_card(com_player, card)
 
     def turn_time_out(self):
@@ -190,7 +211,7 @@ class UnoGame:
             self.next_turn()
         elif card.value == "reload":
             self._reload_hand(player)
-        elif card.value == "change_color":
+        elif card.value == "color_change":
             self._change_color(player)
         elif card.value == "bonus":  # one more current player's turn
             self.prev_turn()
@@ -203,7 +224,7 @@ class UnoGame:
         for card in player.hand:
             if card.color != "black":
                 color_count[card.color] += 1
-        self.top_discard_card.color = max(color_count, key=color_count.get)
+        self.add_game_event_info("color_change", max(color_count, key=color_count.get))
 
     # reload player's hand put all card on deck and shuffle then draw the same number of card
     def _reload_hand(self, player):
@@ -228,6 +249,14 @@ class UnoGame:
                 "dest": dest,
                 "delay": delay,
                 "duration": duration,
+            }
+        )
+
+    def add_game_event_info(self, type, value):
+        self.game_event_infos.append(
+            {
+                "type": type,
+                "value": value,
             }
         )
 
