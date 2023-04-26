@@ -17,6 +17,9 @@ class MenuScreen(Screen):
         self.button_key_pos = None
         self.button_click_sound = pygame.mixer.Sound(SOUND.BUTTON_CLICK)
         self.button_click_sound.set_volume(self.sound_effects_volume)
+        self.input_mode = False
+        self.input_boxes = []
+        self.selected_input_box = None
 
     def find_hovered_button(self, pos):
         for i, section in enumerate(self.button_sections):
@@ -40,10 +43,20 @@ class MenuScreen(Screen):
 
     def handle_key_event(self, event):
         if event.type == pygame.KEYDOWN:
-            self.handle_movement(event)
             self.handle_return_down(event)
+            if self.input_mode:
+                self.handle_input(event)
+            else:
+                self.handle_movement(event)
         elif event.type == pygame.KEYUP:
             self.handle_return_up(event)
+
+    def handle_input(self, event):
+        if event.key == pygame.K_BACKSPACE:
+            self.selected_input_box.delete()
+        else:
+            if event.key != pygame.K_RETURN:
+                self.selected_input_box.add(event.unicode)
 
     def move_up(self):
         x = self.button_key_pos[0] - 1 if self.button_key_pos is not None else 0
@@ -112,7 +125,15 @@ class MenuScreen(Screen):
         if button:
             button.click()
             self.button_click_sound.play()
-        # button.click() if button else None5
+            if button in self.input_boxes:
+                if button.selected:
+                    button.unselect()
+                    self.input_mode = False
+                    self.selected_input_box = None
+                else:
+                    button.select()
+                    self.input_mode = True
+                    self.selected_input_box = button
 
     def button_click_up(self, button):
         if button is not None:

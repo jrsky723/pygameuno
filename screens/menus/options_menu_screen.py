@@ -65,14 +65,6 @@ class OptionsMenuScreen(MenuScreen):
         self.color_blind_selected_button.select()
         self.button_sections.append(self.color_blind_buttons)
 
-        # volume_params = button_params | {"y": B_Y + T_GAP * 3}
-        # self.volume_buttons = [
-        #     Button(x=B_X, text="-", **volume_params),
-        #     Button(x=B_X + B_GAP * 2, text="+", **volume_params),
-        # ]
-        # self.texts += [TextBox(x=B_X + B_GAP, text=str(self.volume), **volume_params)]
-        # self.button_sections.append(self.volume_buttons)
-
         ########    SAVE AND BACK BUTTONS   ########
         save_params = button_params | {"y": B_Y + T_GAP * 4, "width": 170}
         self.save_back_buttons = [

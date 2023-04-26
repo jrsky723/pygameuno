@@ -87,6 +87,18 @@ class TEXTBOX:
     BORDER_COLOR = "white"
 
 
+class INPUTBOX:
+    FONT_SIZE = 40
+    TEXT_COLOR = "white"
+    BORDER_COLOR = "white"
+    BACKGROUND_COLOR = "black"
+    WIDTH = 300
+    HEIGHT = 60
+    BORDER_WIDTH = 0
+    HOVERED_BORDER_WIDTH = 2
+    SELECTED_BORDER_WIDTH = 4
+
+
 # Directories
 ASSETS_DIR = os.path.join(os.path.dirname(__file__), "..", "assets")
 CARD_IMAGES_DIR = os.path.join(ASSETS_DIR, "card_images")
