@@ -13,8 +13,8 @@ import copy
 
 
 class GameScreen(Screen):
-    def __init__(self, screen, options):
-        super().__init__(screen, options)
+    def __init__(self, screen, clock, options):
+        super().__init__(screen, clock, options)
         self.com_players_number = 3
         self.max_players = 6
         self.game = UnoGame(human_number=1, com_number=self.com_players_number)

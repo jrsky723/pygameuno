@@ -4,8 +4,8 @@ from screens.screen import Screen
 
 
 class MenuScreen(Screen):
-    def __init__(self, screen, options):
-        super().__init__(screen, options)
+    def __init__(self, screen, clock, options):
+        super().__init__(screen, clock, options)
         self.title_params = self.rect_params | {
             "x": "center",
             "y": S.TITLE_Y,
@@ -132,6 +132,8 @@ class MenuScreen(Screen):
                     self.selected_input_box = None
                 else:
                     button.select()
+                    if self.selected_input_box is not None:
+                        self.selected_input_box.unselect()
                     self.input_mode = True
                     self.selected_input_box = button
 

@@ -7,8 +7,8 @@ from utils.constants import SCREEN as S
 
 
 class SoundSettingMenuScreen(MenuScreen):
-    def __init__(self, screen, options):
-        super().__init__(screen, options)
+    def __init__(self, screen, clock, options):
+        super().__init__(screen, clock, options)
 
         ############### TITLE ################
         self.texts += [TextBox(text="SOUND SETTINGS", **self.title_params)]
@@ -116,7 +116,7 @@ class SoundSettingMenuScreen(MenuScreen):
         }
         self.options["sound"] = new_sound_settings
         save_options_json(self.options)
-        self.__init__(self.screen, self.options)
+        self.__init__(self.screen, self.clock, self.options)
 
     def run(self):
         super().run()

@@ -1,12 +1,13 @@
 from screens.menu_screen import MenuScreen
 from screens.menus.join_menu_screen import JoinMenuScreen
+from screens.menus.host_menu_screen import HostMenuScreen
 from renders.button import Button
 from renders.text_box import TextBox
 
 
 class MultiplayerMenuScreen(MenuScreen):
-    def __init__(self, screen, options):
-        super().__init__(screen, options)
+    def __init__(self, screen, clock, options):
+        super().__init__(screen, clock, options)
         self.texts += [TextBox(text="MULTIPLAYER", **self.title_params)]
         B_Y, B_GAP = 250, 150
         buttons_params = self.rect_params | {"x": "center", "width": 300, "height": 100}
@@ -31,8 +32,10 @@ class MultiplayerMenuScreen(MenuScreen):
                 self.back()
 
     def host(self):
+        host_menu_screen = HostMenuScreen(self.screen, self.clock, self.options)
+        host_menu_screen.run()
         pass
 
     def join(self):
-        join_menu_screen = JoinMenuScreen(self.screen, self.options)
+        join_menu_screen = JoinMenuScreen(self.screen, self.clock, self.options)
         join_menu_screen.run()

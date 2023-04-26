@@ -7,8 +7,8 @@ from utils.constants import SCREEN as S
 
 
 class KeySettingMenuScreen(MenuScreen):
-    def __init__(self, screen, options):
-        super().__init__(screen, options)
+    def __init__(self, screen, clock, options):
+        super().__init__(screen, clock, options)
         self.selected_button = None
         ############### TITLE ################
         self.texts += [TextBox(text="KEY SETTINGS", **self.title_params)]
@@ -155,7 +155,7 @@ class KeySettingMenuScreen(MenuScreen):
             self.error_message.visible = False
         self.options["key_bindings"] = new_key_bindings
         save_options_json(self.options)
-        self.__init__(self.screen, self.options)
+        self.__init__(self.screen, self.clock, self.options)
 
     # returns True if there are no duplicated keyname
     def check_duplicated_key(self, new_key_bindings):

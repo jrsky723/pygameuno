@@ -10,8 +10,8 @@ import os
 
 
 class OptionsMenuScreen(MenuScreen):
-    def __init__(self, screen, options):
-        super().__init__(screen, options)
+    def __init__(self, screen, clock, options):
+        super().__init__(screen, clock, options)
         ############### TITLE ################
         self.texts += [TextBox(text="OPTIONS", **self.title_params)]
 
@@ -114,17 +114,19 @@ class OptionsMenuScreen(MenuScreen):
         save_options_json(new_options)
         if new_options["screen_size"] != self.screen_size:
             self.change_screen_size(new_options["screen_size"])
-        self.__init__(self.screen, new_options)
+        self.__init__(self.screen, self.clock, new_options)
 
     def open_key_settings(self):
-        key_setting_menu = KeySettingMenuScreen(self.screen, self.options)
+        key_setting_menu = KeySettingMenuScreen(self.screen, self.clock, self.options)
         options = key_setting_menu.run()
-        self.__init__(self.screen, options)
+        self.__init__(self.screen, self.clock, options)
 
     def open_sound_settings(self):
-        sound_setting_menu = SoundSettingMenuScreen(self.screen, self.options)
+        sound_setting_menu = SoundSettingMenuScreen(
+            self.screen, self.clock, self.options
+        )
         options = sound_setting_menu.run()
-        self.__init__(self.screen, options)
+        self.__init__(self.screen, self.clock, options)
 
     # Update and run
     def update(self):

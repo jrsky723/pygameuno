@@ -6,8 +6,8 @@ from renders.text_box import TextBox
 
 
 class GameModeMenuScreen(MenuScreen):
-    def __init__(self, screen, options):
-        super().__init__(screen, options)
+    def __init__(self, screen, clock, options):
+        super().__init__(screen, clock, options)
         self.texts += [TextBox(text="GAME MODE", **self.title_params)]
         B_Y, B_GAP = 250, 150
         buttons_params = self.rect_params | {"x": "center", "width": 500, "height": 100}
@@ -35,11 +35,13 @@ class GameModeMenuScreen(MenuScreen):
                 self.back()
 
     def open_single_player(self):
-        game_screen = GameScreen(self.screen, self.options)
+        game_screen = GameScreen(self.screen, self.clock, self.options)
         game_screen.run()
         pass
 
     def open_multiplayer(self):
-        multiplayer_menu_screen = MultiplayerMenuScreen(self.screen, self.options)
+        multiplayer_menu_screen = MultiplayerMenuScreen(
+            self.screen, self.clock, self.options
+        )
         multiplayer_menu_screen.run()
         pass

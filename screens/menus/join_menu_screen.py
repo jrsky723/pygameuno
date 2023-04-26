@@ -6,8 +6,8 @@ from renders.input_box import InputBox
 
 # TODO: get user input to get host IP address and join(submit) button, back button
 class JoinMenuScreen(MenuScreen):
-    def __init__(self, screen, options):
-        super().__init__(screen, options)
+    def __init__(self, screen, clock, options):
+        super().__init__(screen, clock, options)
         self.texts += [TextBox(text="JOIN", **self.title_params)]
         B_Y, B_GAP = 250, 150
         buttons_params = self.rect_params | {
@@ -42,4 +42,5 @@ class JoinMenuScreen(MenuScreen):
                 self.back()
 
     def join(self):
+        host_ip = self.input_box.text
         pass

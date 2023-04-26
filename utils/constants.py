@@ -17,6 +17,7 @@ class SCREEN:
     }
     BACKGROUND_COLOR = (50, 50, 50)
     FONT_SIZE = 30
+    FPS = 30
 
 
 class SOUND:

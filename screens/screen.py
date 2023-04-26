@@ -5,9 +5,10 @@ from utils.color_conversion import rgb
 
 
 class Screen:
-    def __init__(self, screen, options):
+    def __init__(self, screen, clock, options):
         self.screen = screen
         self.options = options
+        self.clock = clock
         self.screen_size = options["screen_size"]
         self.color_blind = options["color_blind"]
         self.key_bindings = options["key_bindings"]
@@ -23,7 +24,6 @@ class Screen:
         self.background_music_volume = self.sound["volume"] * self.sound["music"] / 100
         self.sound_effects_volume = self.sound["volume"] * self.sound["effects"] / 100
         pygame.mixer.music.set_volume(self.background_music_volume)
-        
 
     def move_up(self):
         pass
@@ -95,10 +95,11 @@ class Screen:
         self.screen.fill(self.background_color)
 
     def main_loop(self):
+        self.clock.tick(S.FPS)
         self.process_events()
         self.update()
         self.draw()
-        pygame.display.update()
+        pygame.display.flip()
 
     def run(self):
         try:

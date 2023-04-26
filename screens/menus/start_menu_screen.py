@@ -6,8 +6,8 @@ from renders.text_box import TextBox
 
 
 class StartMenuScreen(MenuScreen):
-    def __init__(self, screen, options):
-        super().__init__(screen, options)
+    def __init__(self, screen, clock, options):
+        super().__init__(screen, clock, options)
         self.texts += [TextBox(text="Pygame UNO", **self.title_params)]
         B_Y, B_GAP = 250, 150
         buttons_params = self.rect_params | {"x": "center", "width": 300, "height": 100}
@@ -32,10 +32,12 @@ class StartMenuScreen(MenuScreen):
                 self.quit()
 
     def open_game_mode_menu(self):
-        game_mode_menu_screen = GameModeMenuScreen(self.screen, self.options)
+        game_mode_menu_screen = GameModeMenuScreen(
+            self.screen, self.clock, self.options
+        )
         game_mode_menu_screen.run()
 
     def open_options(self):
-        options_menu = OptionsMenuScreen(self.screen, self.options)
+        options_menu = OptionsMenuScreen(self.screen, self.clock, self.options)
         new_options = options_menu.run()
-        self.__init__(self.screen, new_options)
+        self.__init__(self.screen, self.clock, new_options)
