@@ -22,7 +22,8 @@ class TextBox(Rect):
         border_color=T.BORDER_COLOR,
         border_width=0,
     ):
-        temp_text_surface = get_text_surface(text, font_size, text_color)
+        self.text_color = rgb(text_color, color_blind)
+        temp_text_surface = get_text_surface(text, font_size, self.text_color)
         width = max(width, temp_text_surface.get_width())
         height = max(height, temp_text_surface.get_height())
         super().__init__(
@@ -40,7 +41,6 @@ class TextBox(Rect):
         )
         self.text = text
         self.font_size = font_size * SIZE_RATIO[screen_size] if resize else font_size
-        self.text_color = rgb(text_color, color_blind)
         self.text_surface = get_text_surface(self.text, self.font_size, self.text_color)
         self.visible = True
 

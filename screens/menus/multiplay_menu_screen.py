@@ -1,6 +1,6 @@
 from screens.menu_screen import MenuScreen
 from screens.menus.join_menu_screen import JoinMenuScreen
-from screens.menus.host_menu_screen import HostMenuScreen
+from screens.menus.lobby_menu_screen import LobbyMenuScreen
 from renders.button import Button
 from renders.text_box import TextBox
 
@@ -32,7 +32,9 @@ class MultiplayerMenuScreen(MenuScreen):
                 self.back()
 
     def host(self):
-        host_menu_screen = HostMenuScreen(self.screen, self.clock, self.options)
+        host_menu_screen = LobbyMenuScreen(
+            self.screen, self.clock, self.options, isHost=True
+        )
         host_menu_screen.run()
         pass
 

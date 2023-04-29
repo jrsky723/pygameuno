@@ -17,7 +17,7 @@ class SCREEN:
     }
     BACKGROUND_COLOR = (50, 50, 50)
     FONT_SIZE = 30
-    FPS = 30
+    FPS = 60
 
 
 class SOUND:
@@ -80,6 +80,7 @@ class BUTTON:
     TEXT_HOVER_COLOR = "black"
     TEXT_SELECT_COLOR = "white"
     BORDER_COLOR = "white"
+    TEXT_DISABLE_COLOR = "dark_gray"
 
 
 class TEXTBOX:

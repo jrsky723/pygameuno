@@ -167,14 +167,8 @@ class GameScreen(Screen):
             self.draw_player(self.com_hand_surfaces[i], com, is_player=False)
 
     def draw_player(self, surface, player, is_player):
-        if is_player:
-            FONT_SIZE = 35
-        else:
-            FONT_SIZE = 20
-        text_params = {
-            "font_size": FONT_SIZE,
-            "reposition": False,
-        } | self.rect_params
+        FONT_SIZE = 35 if is_player else 20
+        text_params = {"font_size": FONT_SIZE, "reposition": False} | self.rect_params
         self.draw_player_name(surface, player.name, text_params)
         self.draw_player_card_number(surface, len(player.hand), text_params)
         if player.is_turn:
@@ -184,10 +178,7 @@ class GameScreen(Screen):
     def draw_player_name(self, surface, player_name, text_params):
         S_HEIGHT = surface.get_height()
         player_name_text = TextBox(
-            text=player_name,
-            x=13,
-            y=S_HEIGHT * 0.1,
-            **text_params,
+            text=player_name, x=13, y=S_HEIGHT * 0.1, **text_params
         )
         player_name_text.draw(surface)
 
@@ -374,7 +365,7 @@ class GameScreen(Screen):
     def update_animations_finished(self):
         animations = []
         for i, animation in enumerate(self.animations):
-            if i is not 0:
+            if i != 0:
                 animation.set_start_time(self.animations[i - 1].get_start_time())
             if animation.__class__.__name__ == "MoveAnimation":
                 if animation.move_info["type"] == "card_move":

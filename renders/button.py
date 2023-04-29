@@ -47,6 +47,7 @@ class Button(TextBox):
         self.hover_text_color = rgb(hover_text_color, color_blind)
         self.select_background_color = rgb(select_background_color, color_blind)
         self.select_text_color = rgb(select_text_color, color_blind)
+        self.disable_text_color = rgb(B.TEXT_DISABLE_COLOR)
         self.hovered = False
         self.selected = False
         self.clicked = False

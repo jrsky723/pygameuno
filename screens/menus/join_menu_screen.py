@@ -21,7 +21,7 @@ class JoinMenuScreen(MenuScreen):
             y="center",
             width=500,
             height=100,
-            text="IP ADDRESS",
+            text="IPv4 ADDRESS",
             **self.rect_params,
         )
         self.input_boxes.append(self.input_box)
