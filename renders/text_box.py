@@ -61,3 +61,10 @@ class TextBox(Rect):
     def update(self):
         super().update()
         self.text_surface = get_text_surface(self.text, self.font_size, self.text_color)
+
+    def set_text(self, text):
+        self.text = text
+        self.update()
+
+    def get_text(self):
+        return self.text
