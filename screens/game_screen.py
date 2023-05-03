@@ -8,13 +8,15 @@ from renders.rect import Rect
 from utils.timer import Timer
 from utils.color_conversion import rgb
 from animations.move_animation import MoveAnimation
-from utils.constants import SCREEN as S, SIZE_RATIO as SR, SOUND
+from utils.constants import SCREEN as S, SIZE_RATIO as SR, SOUND, MUSIC
 import copy
 
 
 class GameScreen(Screen):
     def __init__(self, screen, clock, options):
         super().__init__(screen, clock, options)
+        pygame.mixer.music.load(MUSIC.GAME_BACKGROUND)
+        pygame.mixer.music.play(-1)
         self.com_players_number = 3
         self.max_players = 6
         self.game = UnoGame(human_number=1, com_number=self.com_players_number)

@@ -26,6 +26,11 @@ class SOUND:
     CARD_MOVE = "assets/sounds/card_move_sound.mp3"
 
 
+class MUSIC:
+    MENU_BACKGROUND = "assets/sounds/sinnesloschen-beam.mp3"
+    GAME_BACKGROUND = "assets/sounds/cool-jazz-loops-2641.mp3"
+
+
 # Colors
 COLORS_DICT = {
     "black": (0, 0, 0),
@@ -104,6 +109,3 @@ class INPUTBOX:
 # Directories
 ASSETS_DIR = os.path.join(os.path.dirname(__file__), "..", "assets")
 CARD_IMAGES_DIR = os.path.join(ASSETS_DIR, "card_images")
-
-# SOUND PATH
-BACKGROUND_MUSIC = "assets/sounds/sinnesloschen-beam.mp3"

@@ -1,8 +1,8 @@
 import pygame
 from screens.menus.start_menu_screen import StartMenuScreen
 from utils.options import load_options_json
-from utils.constants import SCREEN as S, BACKGROUND_MUSIC
-from screens.menus.lobby_menu_screen import LobbyMenuScreen
+from utils.constants import SCREEN as S, MUSIC as M
+
 
 if __name__ == "__main__":
     pygame.init()
@@ -15,11 +15,9 @@ if __name__ == "__main__":
     )
     clock = pygame.time.Clock()
 
-    pygame.mixer.music.load(BACKGROUND_MUSIC)
+    pygame.mixer.music.load(M.MENU_BACKGROUND)
     pygame.mixer.music.play(-1)
     pygame.event.get()
-    # lobby_menu = LobbyMenuScreen(screen, clock, options, True)
-    # lobby_menu.run()
     start_menu = StartMenuScreen(screen, clock, options)
     start_menu.run()
     pygame.quit()

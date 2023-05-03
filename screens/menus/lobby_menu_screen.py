@@ -261,6 +261,8 @@ class LobbyMenuScreen(MenuScreen):
                 self.back()
             elif button == self.ready_button:
                 self.ready()
+            elif button == self.name_change_button:
+                self.change_name()
         if self.is_host:
             if button == self.start_button:
                 self.start()
@@ -272,15 +274,6 @@ class LobbyMenuScreen(MenuScreen):
                 self.kick()
             if button == self.password_change_button:
                 self.change_password()
-            if button == self.name_change_button:
-                self.change_name()
-
-        # if button != None:
-        #     if button == self.back_button:
-        #         self.back()
-        #     elif button == self.ready_button:
-        #         self.ready()
-        #     elif button == self.start_button:
 
     def ready(self):
         self.my_player["is_ready"] = not self.my_player["is_ready"]
@@ -309,4 +302,7 @@ class LobbyMenuScreen(MenuScreen):
 
     def change_name(self):
         self.my_player["name"] = self.name_input_box.get_text()
+        pass
+
+    def start(self):
         pass
