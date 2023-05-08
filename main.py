@@ -14,7 +14,6 @@ if __name__ == "__main__":
         (S.WIDTH[screen_size], S.HEIGHT[screen_size]), pygame.DOUBLEBUF
     )
     clock = pygame.time.Clock()
-
     pygame.mixer.music.load(M.MENU_BACKGROUND)
     pygame.mixer.music.play(-1)
     pygame.event.get()

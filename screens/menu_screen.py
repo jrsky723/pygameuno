@@ -112,8 +112,9 @@ class MenuScreen(Screen):
                 button.draw(self.screen)
 
     def button_hover(self, button):
-        self.hovered_button = button
-        button.hover()
+        if button != self.hovered_button:
+            self.hovered_button = button
+            button.hover()
 
     def button_unhover(self, button):
         if self.hovered_button == button:

@@ -18,8 +18,11 @@ class Card(TextBox):
         height=C.HEIGHT,
     ):
         self.card = card
+        border_color = "black"
         if card.get_color() == "black":
             text_color = "white"
+        else:
+            text_color = "black"
         super().__init__(
             x,
             y,
@@ -34,11 +37,14 @@ class Card(TextBox):
             text_color,
             card.get_color(),  # background_color
             border_width=3,
+            border_color=border_color,
         )
         self.hovered = False
         self.face_up = face_up
         if self.face_up == False:
             self.face_down()
+
+        self.origin_border_color = self.border_color
 
     def draw(self, screen):
         super().draw(screen)
@@ -46,6 +52,10 @@ class Card(TextBox):
 
     def update(self):
         super().update()
+        if self.hovered:
+            self.border_color = rgb("white", self.color_blind)
+        else:
+            self.border_color = self.origin_border_color
 
     def hover(self):
         self.hovered = True
@@ -62,11 +72,13 @@ class Card(TextBox):
     def face_down(self):
         self.face_up = False
         self.background_color = rgb("black", self.color_blind)
+        self.border_color = rgb("white", self.color_blind)
         self.text = ""
 
     def face_up(self):
         self.face_up = True
         self.background_color = self.origin_background_color
+        self.border_color = self.origin_border_color
         self.text = self.card.get_abb()
 
     def get_face_up(self):

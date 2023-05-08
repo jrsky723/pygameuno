@@ -23,7 +23,9 @@ class SCREEN:
 class SOUND:
     # SOUND
     BUTTON_CLICK = "assets/sounds/button_click.mp3"
-    CARD_MOVE = "assets/sounds/card_move_sound.mp3"
+    CARD_MOVE = "assets/sounds/card_move.mp3"
+    CARD_FLIP = "assets/sounds/card_flip.mp3"
+    CARD_ERROR = "assets/sounds/card_error.mp3"
 
 
 class MUSIC:
