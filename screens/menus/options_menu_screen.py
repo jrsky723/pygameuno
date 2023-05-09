@@ -75,6 +75,13 @@ class OptionsMenuScreen(MenuScreen):
         ]
         self.button_sections.append(self.save_back_buttons)
 
+        ######## RESET BUTTON ########
+        reset_params = button_params | {"y": B_Y + T_GAP * 4, "width": 170}
+        self.reset_button = Button(x=B_X + B_GAP * -3 + save_params["width"], text="RESET", **reset_params)
+        self.button_sections.append([self.reset_button])
+
+
+
     # Handle events
     def button_click_down(self, button):
         super().button_click_down(button)
@@ -94,6 +101,8 @@ class OptionsMenuScreen(MenuScreen):
         if button is not None:
             if button.text == "SAVE":
                 self.save_options()
+            elif button.text == "RESET":
+                self.reset_options()
             elif button in self.key_settings_buttons:
                 self.open_key_settings()
             elif button in self.sound_settings_buttons:
@@ -136,3 +145,26 @@ class OptionsMenuScreen(MenuScreen):
     def run(self):
         super().run()
         return self.options
+
+    def reset_options(self):
+        default_options = {
+            "screen_size": "medium",
+            "sound": {
+                "volume": 10,
+                "music": 10,
+                "effects": 10,
+            },
+            "key_bindings": {
+                "up": "up",
+                "down": "down",
+                "left": "left",
+                "right": "right",
+                "return": "return",
+            },
+            "color_blind": False,
+        }
+        self.options = default_options
+        save_options_json(default_options)
+        if default_options["screen_size"] != self.screen_size:
+            self.change_screen_size(default_options["screen_size"])
+        self.__init__(self.screen, self.clock, default_options)
