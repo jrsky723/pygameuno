@@ -72,13 +72,15 @@ class OptionsMenuScreen(MenuScreen):
             Button(
                 x=B_X + B_GAP * 3 - save_params["width"], text="BACK", **save_params
             ),
+            Button(x=B_X + B_GAP * -3 + save_params["width"], text="RESET", **save_params)
         ]
         self.button_sections.append(self.save_back_buttons)
 
-        ######## RESET BUTTON ########
+        """ ######## RESET BUTTON ########
         reset_params = button_params | {"y": B_Y + T_GAP * 4, "width": 170}
         self.reset_button = Button(x=B_X + B_GAP * -3 + save_params["width"], text="RESET", **reset_params)
         self.button_sections.append([self.reset_button])
+        """
 
 
 
