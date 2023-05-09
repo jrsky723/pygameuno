@@ -4,7 +4,7 @@ from screens.menus.key_setting_menu_screen import KeySettingMenuScreen
 from screens.menus.sound_setting_menu_screen import SoundSettingMenuScreen
 from renders.button import Button
 from renders.text_box import TextBox
-from utils.options import save_options_json
+from utils.options import save_options_json, DEFAULT_OPTIONS
 from utils.constants import SCREEN as S
 import os
 
@@ -72,7 +72,9 @@ class OptionsMenuScreen(MenuScreen):
             Button(
                 x=B_X + B_GAP * 3 - save_params["width"], text="BACK", **save_params
             ),
-            Button(x=B_X + B_GAP * -3 + save_params["width"], text="RESET", **save_params)
+            Button(
+                x=B_X + B_GAP * -3 + save_params["width"], text="RESET", **save_params
+            ),
         ]
         self.button_sections.append(self.save_back_buttons)
 
@@ -81,8 +83,6 @@ class OptionsMenuScreen(MenuScreen):
         self.reset_button = Button(x=B_X + B_GAP * -3 + save_params["width"], text="RESET", **reset_params)
         self.button_sections.append([self.reset_button])
         """
-
-
 
     # Handle events
     def button_click_down(self, button):
@@ -149,24 +149,8 @@ class OptionsMenuScreen(MenuScreen):
         return self.options
 
     def reset_options(self):
-        default_options = {
-            "screen_size": "medium",
-            "sound": {
-                "volume": 10,
-                "music": 10,
-                "effects": 10,
-            },
-            "key_bindings": {
-                "up": "up",
-                "down": "down",
-                "left": "left",
-                "right": "right",
-                "return": "return",
-            },
-            "color_blind": False,
-        }
-        self.options = default_options
-        save_options_json(default_options)
-        if default_options["screen_size"] != self.screen_size:
-            self.change_screen_size(default_options["screen_size"])
-        self.__init__(self.screen, self.clock, default_options)
+        self.options = DEFAULT_OPTIONS
+        save_options_json(self.options)
+        if self.options["screen_size"] != self.screen_size:
+            self.change_screen_size(self.options["screen_size"])
+        self.__init__(self.screen, self.clock, self.options)
