@@ -53,6 +53,13 @@ class Screen:
         elif event.key == pygame.key.key_code(self.key_bindings["right"]):
             self.move_right()
 
+    def handle_function_keys(self, event):
+        if event.key == pygame.key.key_code(self.key_bindings["draw"]):
+            self.draw_card()
+
+    def draw_card(self):
+        pass
+
     def handle_return_down(self, event):
         if event.key == pygame.key.key_code(self.key_bindings["return"]):
             self.return_down()
@@ -70,7 +77,10 @@ class Screen:
         pass
 
     def handle_key_event(self, event):
-        pass
+        if event.type == pygame.KEYDOWN:
+            self.handle_movement(event)
+            self.handle_function_keys(event)
+            self.handle_return_down(event)
 
     def process_events(self):
         for event in pygame.event.get():

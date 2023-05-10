@@ -113,7 +113,7 @@ class UnoGame:
                 card, src="deck", dest=f"player_{player.get_id()}"
             )
 
-    def can_play_card(self, player, card):
+    def can_play_card(self, card):
         if self.top_color == "black" or card.color == "black":
             return True
         if card.color == self.top_color or card.value == self.top_value:
@@ -121,7 +121,7 @@ class UnoGame:
         return False
 
     def play_card(self, player, card):
-        if not self.can_play_card(player, card):
+        if not self.can_play_card(card):
             return False
         player.play_card(card)
         self.add_card_move_animation(

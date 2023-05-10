@@ -316,10 +316,10 @@ class GameScreen(Screen):
 
     # region Events
     def process_events(self):
+        super().process_events()
         if self.animations:
             self.turn_timer.pause()
             return
-        super().process_events()
         self.turn_timer.resume()
         if self.game.get_game_event_infos():
             self.process_game_events()
@@ -371,6 +371,7 @@ class GameScreen(Screen):
         self.add_game_animations()
         for card_render in self.card_renders:
             card_render.update()
+        self.update_hovered_card_render()
 
     def update_animations_finished(self):
         animations = []
@@ -452,33 +453,28 @@ class GameScreen(Screen):
         if animation.__class__.__name__ == "MoveAnimation":
             self.sound["card_move"].play()
 
+    # region User Input
+
+    ## mouse Input
     def handle_mouse_event(self, event):
         if event.type == pygame.MOUSEMOTION:
             pos = event.pos
-            self.find_hoverd_card(pos)
+            self.find_hoverd_card_idx(pos)
         elif event.type == pygame.MOUSEBUTTONDOWN:
             self.handle_mouse_click(event)
 
-    def find_hoverd_card(self, pos):
+    def find_hoverd_card_idx(self, pos):
         for i, card_render in enumerate(self.my_hand_card_renders):
             if card_render.is_on_mouse(pos):
-                self.hovered_card_render = card_render
                 self.hovered_card_render_idx = i
-            else:
-                self.card_unhover(i)
-        if self.hovered_card_render:
-            self.hovered_card_render.hover()
-
-    def card_unhover(self, idx):
-        if self.hovered_card_render_idx == idx:
-            self.hovered_card_render = None
-            self.hovered_card_render_idx = None
+                return
+        self.hovered_card_render_idx = None
 
     def handle_mouse_click(self, event):
         if self.hovered_card_render:
             self.card_clicked(self.hovered_card_render)
         if self.deck_render.is_on_mouse(event.pos):
-            self.deck_clicked()
+            self.draw_card()
 
     def card_clicked(self, card_render):
         try:
@@ -490,12 +486,10 @@ class GameScreen(Screen):
                     self.sound["card_flip"].play()
                 else:
                     self.sound["card_error"].play()
-                # self.my_hand_card_renders.remove(card_render)
-
         except Exception as e:
             print(e)
 
-    def deck_clicked(self):
+    def draw_card(self):
         try:
             if self.game.get_current_player() == self.my_player:
                 self.game.draw_card(self.my_player)
@@ -503,3 +497,38 @@ class GameScreen(Screen):
                 self.sound["card_flip"].play()
         except Exception as e:
             print(e)
+
+    def return_down(self):
+        self.card_clicked(self.hovered_card_render)
+
+    def move_left(self):
+        if self.hovered_card_render_idx is None:
+            self.hovered_card_render_idx = 0
+            return
+        if self.hovered_card_render_idx > 0:
+            self.hovered_card_render_idx -= 1
+
+    def move_right(self):
+        if self.hovered_card_render_idx is None:
+            self.hovered_card_render_idx = 0
+            return
+        if self.hovered_card_render_idx < len(self.my_hand_card_renders) - 1:
+            self.hovered_card_render_idx += 1
+
+    def update_hovered_card_render(self):
+        if self.my_hand_card_renders == []:
+            self.hovered_card_render_idx = None
+            self.hovered_card_render = None
+            return
+        if self.hovered_card_render_idx is None:
+            self.hovered_card_render = None
+        else:
+            if self.hovered_card_render_idx >= len(self.my_hand_card_renders):
+                self.hovered_card_render_idx = len(self.my_hand_card_renders) - 1
+            self.hovered_card_render = self.my_hand_card_renders[
+                self.hovered_card_render_idx
+            ]
+            self.hovered_card_render.hover()
+            self.hovered_card_render.update()
+
+    # endregion

@@ -33,6 +33,10 @@ class KeySettingMenuScreen(MenuScreen):
             TextBox(y=T_Y + T_GAP * 3, text="RIGHT", **text_params),
             TextBox(y=T_Y + T_GAP * 4, text="RETURN", **text_params),
         ]
+        text_params["x"] = 720
+        self.texts += [
+            TextBox(y=T_Y, text="DRAW", **text_params),
+        ]
 
         ############ Error #################
         error_params = self.rect_params | {
@@ -54,9 +58,17 @@ class KeySettingMenuScreen(MenuScreen):
             "height": 40,
             "font_size": 25,
         }
+        B_X2 = 900
 
         self.button_sections += [
-            [Button(y=B_Y, text=self.key_bindings["up"], **key_button_params)],
+            [
+                Button(y=B_Y, text=self.key_bindings["up"], **key_button_params),
+                Button(
+                    y=B_Y,
+                    text=self.key_bindings["draw"],
+                    **key_button_params | {"x": B_X2},
+                ),
+            ],
             [
                 Button(
                     y=B_Y + B_GAP, text=self.key_bindings["down"], **key_button_params

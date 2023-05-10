@@ -69,6 +69,10 @@ class InputBox(Button):
         if self.text == self.placeholder:
             self.text = ""
 
+    def unselect(self):
+        super().unselect()
+        self.placeholder = self.text
+
     def delete(self):
         if self.text != "":
             self.text = self.text[:-1]

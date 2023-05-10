@@ -14,6 +14,7 @@ DEFAULT_OPTIONS = {
         "left": "left",
         "right": "right",
         "return": "return",
+        "draw": "d",
     },
     "color_blind": False,
 }
