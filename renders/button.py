@@ -1,4 +1,4 @@
-from utils.color_conversion import rgb
+from utils.color_conversion import rgb, darken_color
 from renders.text_box import TextBox
 from utils.constants import BUTTON as B
 
@@ -43,7 +43,10 @@ class Button(TextBox):
         )
         self.origin_background_color = self.background_color
         self.origin_text_color = self.text_color
-        self.hover_background_color = rgb(hover_background_color, color_blind)
+        if hover_background_color == "darken":
+            self.hover_background_color = darken_color(self.background_color)
+        else:
+            self.hover_background_color = rgb(hover_background_color, color_blind)
         self.hover_text_color = rgb(hover_text_color, color_blind)
         self.select_background_color = rgb(select_background_color, color_blind)
         self.select_text_color = rgb(select_text_color, color_blind)

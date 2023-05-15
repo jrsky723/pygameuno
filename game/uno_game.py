@@ -51,6 +51,9 @@ class UnoGame:
         for value in WILD_ACTION_VALUES:
             cards.append(UnoCard(type="action", color="black", value=value))
 
+        # TODO: remove this
+        # for i in range(10000):
+        #     cards.append(UnoCard(type="action", color="black", value="color_change"))
         return cards
 
     def _shuffle_deck(self):
@@ -244,8 +247,9 @@ class UnoGame:
                 self.discard_pile.append(card)
                 self.top_color = card.color
                 self.top_value = card.value
-                if card.value == "color_change":
+                if card.value == "color_change" and self.selected_color is not None:
                     self.top_color = self.selected_color
+
             else:  # dest == "player_#"
                 player_id = int(dest.split("_")[1])
                 self.players[player_id].add_card(card)
@@ -293,5 +297,11 @@ class UnoGame:
 
     def get_winner(self):
         return self.winner
+
+    # endregion
+
+    # region set functions
+    def set_top_color(self, color):
+        self.top_color = color
 
     # endregion

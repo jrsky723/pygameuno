@@ -10,6 +10,7 @@ from utils.timer import Timer
 from utils.color_conversion import rgb
 from animations.move_animation import MoveAnimation
 from utils.constants import SCREEN as S, SIZE_RATIO as SR, SOUND, MUSIC
+from game.uno_constants import COLORS
 import copy
 
 
@@ -52,13 +53,18 @@ class GameScreen(Screen):
         self.uno_button = None
         self.deck_render = None
 
+        # color_picker
+        self.color_picker_on = False
+        self.color_picker_buttons = []
+        self.color_picker_text = None
+        self.hovered_color_picker_button_idx = None
+        self.hovered_color_picker_button = None
+
         self.card_renders = []
         self.animation_card_renders = []
-        # TODO: for player input cards only
+
         #  hover, click
         self.my_hand_card_renders = []
-        self.create_surfaces()
-        self.create_board()
 
         # handling turns
         self.turn_started = False
@@ -82,6 +88,10 @@ class GameScreen(Screen):
         # card_selection
         self.hovered_card_render = None
         self.hovered_card_render_idx = None
+
+        # create
+        self.create_surfaces()
+        self.create_board()
 
     # region Create functions
 
@@ -165,6 +175,71 @@ class GameScreen(Screen):
             )
             self.card_renders.append(top_discard_card_render)
 
+    ## Create board functions
+
+    def create_top_discard_card_color(self):
+        self.top_discard_card_color = Rect(
+            x=650,
+            y=200,
+            width=50,
+            height=50,
+            background_color="dark_gray",
+            border_width=3,
+            **self.rect_params,
+        )
+
+    def create_uno_button(self):
+        self.uno_button = Button(
+            x=650,
+            y=270,
+            width=70,
+            height=40,
+            background_color="white",
+            text="UNO",
+            font_size=20,
+            text_color="black",
+            **self.rect_params,
+        )
+
+    def create_deck_render(self):
+        self.deck_render = Rect(
+            x=self.pos["deck"][0],
+            y=self.pos["deck"][1],
+            width=80,
+            height=110,
+            background_color="black",
+            border_width=3,
+            **self.rect_params,
+        )
+
+    def create_color_picker(self):
+        self.color_picker_text = TextBox(
+            x=350,
+            y=380,
+            font_size=20,
+            text="Pick a color",
+            **self.rect_params,
+        )
+
+        for i, color in enumerate(COLORS):
+            self.color_picker_buttons.append(
+                Button(
+                    x=350 + i * 60,
+                    y=410,
+                    width=50,
+                    height=50,
+                    background_color=color,
+                    border_width=3,
+                    hover_background_color="darken",
+                    **self.rect_params,
+                )
+            )
+
+    def create_board(self):
+        self.create_uno_button()
+        self.create_deck_render()
+        self.create_color_picker()
+
     # endregion
 
     # region Draw functions
@@ -212,50 +287,17 @@ class GameScreen(Screen):
         )
         timer_text.draw(surface)
 
-    ## Create board functions
-    def create_top_discard_card_color(self):
-        self.top_discard_card_color = Rect(
-            x=650,
-            y=200,
-            width=50,
-            height=50,
-            background_color="dark_gray",
-            border_width=3,
-            **self.rect_params,
-        )
-
-    def create_uno_button(self):
-        self.uno_button = Button(
-            x=650,
-            y=270,
-            width=70,
-            height=40,
-            background_color="white",
-            text="UNO",
-            font_size=20,
-            text_color="black",
-            **self.rect_params,
-        )
-
-    def create_deck_render(self):
-        self.deck_render = Rect(
-            x=self.pos["deck"][0],
-            y=self.pos["deck"][1],
-            width=80,
-            height=110,
-            background_color="black",
-            border_width=3,
-            **self.rect_params,
-        )
-
-    def create_board(self):
-        self.create_uno_button()
-        self.create_deck_render()
-
     def draw_board(self):
         self.draw_top_discard_card_color(self.board_surface, self.game.get_top_color())
         self.uno_button.draw(self.board_surface)
         self.deck_render.draw(self.board_surface)
+        if self.color_picker_on:
+            self.draw_color_picker(self.board_surface)
+
+    def draw_color_picker(self, surface):
+        self.color_picker_text.draw(surface)
+        for button in self.color_picker_buttons:
+            button.draw(surface)
 
     def draw_top_discard_card_color(self, surface, color):
         rect_render = Rect(
@@ -314,46 +356,7 @@ class GameScreen(Screen):
 
     # endregion
 
-    # region Events
-    def process_events(self):
-        super().process_events()
-        if self.animations:
-            self.turn_timer.pause()
-            return
-        self.turn_timer.resume()
-        if self.game.get_game_event_infos():
-            self.process_game_events()
-        # handle player turn timer
-        if self.turn_timer.is_finished():
-            self.game.turn_time_out()
-            self.end_turn()
-
-    def process_game_events(self):
-        for event_info in self.game.get_game_event_infos():
-            if event_info["type"] == "player_win":
-                self.game_over()
-        self.game.set_game_event_infos([])
-
-    def start_game(self):
-        self.game.start_game()
-        self.my_turn()
-
-    def my_turn(self):
-        self.turn_timer.set_timer(self.my_turn_time)
-        self.turn_timer.start()
-
-    def com_turn(self):
-        self.turn_timer.set_timer(self.com_turn_time)
-        self.turn_timer.start()
-
-    def end_turn(self):
-        self.game.next_turn()
-        if self.game.get_current_player() == self.my_player:
-            self.my_turn()
-        else:
-            self.com_turn()
-
-    # endregion
+    # region Main Loop
     def main_loop(self):
         self.create_card_renders()
         super().main_loop()
@@ -372,6 +375,45 @@ class GameScreen(Screen):
         for card_render in self.card_renders:
             card_render.update()
         self.update_hovered_card_render()
+        if self.color_picker_on:
+            self.update_color_picker_button()
+
+    # endregion
+
+    # Events
+    def process_events(self):
+        super().process_events()
+        if self.animations:
+            self.turn_timer.pause()
+            return
+        self.turn_timer.resume()
+        self.process_game_events()
+        # handle player turn timer
+        if self.turn_timer.is_finished():
+            self.game.turn_time_out()
+            self.end_turn()
+
+    # region Animations
+    def add_game_animations(self):
+        for info in self.game.get_animation_infos():
+            if info["type"] == "card_move":
+                self.add_card_move_animation(info)
+        self.game.set_animation_infos([])
+
+    def add_card_move_animation(self, info):
+        obj = self.find_card_render(info["card"])
+        src_pos = (obj.x, obj.y)
+        dest_pos = self.find_dest_pos(info["dest"])
+        self.animations.append(
+            MoveAnimation(
+                obj=obj,
+                src_pos=src_pos,
+                dest_pos=dest_pos,
+                duration=info["duration"],
+                delay=info["delay"],
+                move_info=info,
+            )
+        )
 
     def update_animations_finished(self):
         animations = []
@@ -394,24 +436,6 @@ class GameScreen(Screen):
         info = animation.move_info
         animation.set_dest_pos(self.find_dest_pos(info["dest"]))
 
-    def add_game_animations(self):
-        for info in self.game.get_animation_infos():
-            if info["type"] == "card_move":
-                src_pos = self.find_card_pos(info["card"])
-                dest_pos = self.find_dest_pos(info["dest"])
-                obj = self.find_card_render(info["card"])
-                self.animations.append(
-                    MoveAnimation(
-                        obj=obj,
-                        src_pos=src_pos,
-                        dest_pos=dest_pos,
-                        duration=info["duration"],
-                        delay=info["delay"],
-                        move_info=info,
-                    )
-                )
-        self.game.set_animation_infos([])
-
     def find_card_render(self, card):
         for card_render in self.card_renders:
             if card_render.card == card:
@@ -419,10 +443,6 @@ class GameScreen(Screen):
         deck_render_copy = copy.deepcopy(self.deck_render)
         self.animation_card_renders.append(deck_render_copy)
         return deck_render_copy
-
-    def find_card_pos(self, card):
-        card_render = self.find_card_render(card)
-        return (card_render.x, card_render.y)
 
     def find_dest_pos(self, dest):
         if dest == "deck":
@@ -439,12 +459,44 @@ class GameScreen(Screen):
         result = tuple(x * SR[self.screen_size] for x in pos)
         return result
 
+    # endregion
+
+    def process_game_events(self):
+        for event_info in self.game.get_game_event_infos():
+            if event_info["type"] == "player_win":
+                self.game_over()
+            if event_info["type"] == "color_change_request":
+                self.color_picker_on = True
+        self.game.set_game_event_infos([])
+
+    # region game events
+    def start_game(self):
+        self.game.start_game()
+        self.my_turn()
+
+    def my_turn(self):
+        self.turn_timer.set_timer(self.my_turn_time)
+        self.turn_timer.start()
+
+    def com_turn(self):
+        self.turn_timer.set_timer(self.com_turn_time)
+        self.turn_timer.start()
+
+    def end_turn(self):
+        self.game.next_turn()
+        if self.game.get_current_player() == self.my_player:
+            self.my_turn()
+        else:
+            self.com_turn()
+
     def game_over(self):
         self.running = False
         end_menu_screen = EndMenuScreen(
             self.screen, self.clock, self.options, self.game.get_winner()
         )
         end_menu_screen.run()
+
+    # endregion
 
     # Sound
     def play_animation_sound(self, animation):
@@ -460,6 +512,8 @@ class GameScreen(Screen):
         if event.type == pygame.MOUSEMOTION:
             pos = event.pos
             self.find_hoverd_card_idx(pos)
+            if self.color_picker_on:
+                self.find_hovered_color_picker_button_idx(pos)
         elif event.type == pygame.MOUSEBUTTONDOWN:
             self.handle_mouse_click(event)
 
@@ -470,26 +524,46 @@ class GameScreen(Screen):
                 return
         self.hovered_card_render_idx = None
 
-    def handle_mouse_click(self, event):
-        if self.hovered_card_render:
-            self.card_clicked(self.hovered_card_render)
-        if self.deck_render.is_on_mouse(event.pos):
-            self.draw_card()
+    def find_hovered_color_picker_button_idx(self, pos):
+        for i, button in enumerate(self.color_picker_buttons):
+            if button.is_on_mouse(pos):
+                self.hovered_color_picker_button_idx = i
+                return
+        self.hovered_color_picker_button_idx = None
 
-    def card_clicked(self, card_render):
+    def handle_mouse_click(self, event):
+        if self.animations:
+            return
+        if self.color_picker_on:
+            if self.hovered_color_picker_button_idx is not None:
+                self.color_pick(self.hovered_color_picker_button_idx)
+        else:
+            if self.hovered_card_render:
+                self.card_play(self.hovered_card_render)
+            if self.deck_render.is_on_mouse(event.pos):
+                self.draw_card_from_deck()
+
+    def color_pick(self, idx):
+        color = COLORS[idx]
+        self.game.set_top_color(color)
+        self.color_picker_on = False
+        self.end_turn()
+
+    def card_play(self, card_render):
         try:
             if self.game.get_current_player() == self.my_player:
                 played = self.game.play_card(self.my_player, card_render.card)
                 if played:
                     self.hovered_card_render = None
-                    self.end_turn()
                     self.sound["card_flip"].play()
+                    if self.game.get_game_event_infos() == []:
+                        self.end_turn()
                 else:
                     self.sound["card_error"].play()
         except Exception as e:
             print(e)
 
-    def draw_card(self):
+    def draw_card_from_deck(self):
         try:
             if self.game.get_current_player() == self.my_player:
                 self.game.draw_card(self.my_player)
@@ -499,21 +573,43 @@ class GameScreen(Screen):
             print(e)
 
     def return_down(self):
-        self.card_clicked(self.hovered_card_render)
+        if self.color_picker_on:
+            if self.hovered_color_picker_button_idx is not None:
+                self.color_pick(self.hovered_color_picker_button_idx)
+        elif self.hovered_card_render:
+            self.card_play(self.hovered_card_render)
+
+    def idx_left(self, idx):
+        if idx is None or idx == 0:
+            return 0
+        else:
+            return idx - 1
+
+    def idx_right(self, idx, max_idx):
+        if idx is None:
+            return 0
+        if idx < max_idx - 1:
+            return idx + 1
+        else:
+            return idx
 
     def move_left(self):
-        if self.hovered_card_render_idx is None:
-            self.hovered_card_render_idx = 0
-            return
-        if self.hovered_card_render_idx > 0:
-            self.hovered_card_render_idx -= 1
+        if self.color_picker_on:
+            self.hovered_color_picker_button_idx = self.idx_left(
+                self.hovered_color_picker_button_idx
+            )
+        else:
+            self.hovered_card_render_idx = self.idx_left(self.hovered_card_render_idx)
 
     def move_right(self):
-        if self.hovered_card_render_idx is None:
-            self.hovered_card_render_idx = 0
-            return
-        if self.hovered_card_render_idx < len(self.my_hand_card_renders) - 1:
-            self.hovered_card_render_idx += 1
+        if self.color_picker_on:
+            self.hovered_color_picker_button_idx = self.idx_right(
+                self.hovered_color_picker_button_idx, len(COLORS)
+            )
+        else:
+            self.hovered_card_render_idx = self.idx_right(
+                self.hovered_card_render_idx, len(self.my_hand_card_renders)
+            )
 
     def update_hovered_card_render(self):
         if self.my_hand_card_renders == []:
@@ -530,5 +626,18 @@ class GameScreen(Screen):
             ]
             self.hovered_card_render.hover()
             self.hovered_card_render.update()
+
+    def update_color_picker_button(self):
+        for button in self.color_picker_buttons:
+            button.unhover()
+            button.update()
+        if self.hovered_color_picker_button_idx is None:
+            self.hovered_color_picker_button = None
+        else:
+            self.hovered_color_picker_button = self.color_picker_buttons[
+                self.hovered_color_picker_button_idx
+            ]
+            self.hovered_color_picker_button.hover()
+            self.hovered_color_picker_button.update()
 
     # endregion

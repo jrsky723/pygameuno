@@ -55,9 +55,9 @@ class Screen:
 
     def handle_function_keys(self, event):
         if event.key == pygame.key.key_code(self.key_bindings["draw"]):
-            self.draw_card()
+            self.draw_card_from_deck()
 
-    def draw_card(self):
+    def draw_card_from_deck(self):
         pass
 
     def handle_return_down(self, event):
