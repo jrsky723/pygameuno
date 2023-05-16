@@ -8,3 +8,6 @@ class UnoComPlayer(UnoPlayer):
 
     def is_human(self):
         return False
+
+    def is_com(self):
+        return True

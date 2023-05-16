@@ -68,3 +68,6 @@ class TextBox(Rect):
 
     def get_text(self):
         return self.text
+
+    def set_visible(self, visible):
+        self.visible = visible

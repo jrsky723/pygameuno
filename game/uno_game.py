@@ -2,6 +2,7 @@ import random
 from game.uno_card import UnoCard
 from game.uno_player import UnoPlayer
 from game.uno_com_player import UnoComPlayer
+import time
 from game.uno_constants import COLORS, NUMBERS, COLOR_ACTION_VALUES, WILD_ACTION_VALUES
 
 
@@ -26,7 +27,22 @@ class UnoGame:
         self.top_color = None
         self.top_value = None
         self.game_event_infos = []
+        self.first_uno_called_player = None
+        self.uno_called_times = []
+        self.game_time = time.time()
         self._init_game()
+
+    def get_uno_called_times(self):
+        return self.uno_called_times
+
+    def set_uno_called_times(self, times):
+        self.uno_called_times = times
+
+    def set_game_time(self, time):
+        self.game_time = time
+
+    def get_game_time(self):
+        return self.game_time
 
     def _init_game(self):
         UnoPlayer.init()
@@ -60,7 +76,7 @@ class UnoGame:
         random.shuffle(self.deck)
 
     # Deal 7 cards to each player in turns.
-    def _deal_cards(self, num_cards=5):
+    def _deal_cards(self, num_cards=2):
         for i in range(num_cards):
             for player in self.players:
                 self.add_card_move_animation(
@@ -110,11 +126,15 @@ class UnoGame:
         for i in range(draw_number):
             if len(self.deck) == 0:
                 self.game_over = True
+                self.add_game_event_info("game_over", "deck_empty")
                 return
             card = self.deck.pop(0)
             self.add_card_move_animation(
                 card, src="deck", dest=f"player_{player.get_id()}"
             )
+        if player.get_is_uno():
+            player.set_is_uno(False)
+            player.set_uno_checked(False)
 
     def can_play_card(self, card):
         if self.top_color == "black" or card.color == "black":
@@ -137,9 +157,39 @@ class UnoGame:
             self.add_game_event_info("player_win", player)
             self.game_over = True
             self.winner = self.get_current_player()
+
+        if player.get_hand_size() == 1:
+            self.add_com_uno_called_times(player)
+
         return True
 
     # endregion
+
+    def add_com_uno_called_times(self, player):
+        player.set_is_uno(True)
+        for p in self.players:
+            if p.is_com():
+                if player == p:
+                    random_time = random.uniform(0, 2)
+                else:
+                    random_time = random.uniform(1, 3)
+                self.uno_called_times.append(
+                    {"player": p, "time": self.game_time + random_time}
+                )
+        self.uno_called_times.sort(key=lambda x: x["time"])
+
+    def uno_called(self, player):
+        self.uno_called_times = []
+        is_right_call = False
+        for p in self.players:
+            if p.get_is_uno():
+                is_right_call = True
+                p.set_uno_checked(True)
+                if p == player:
+                    p.set_uno_success(True)
+        if is_right_call:
+            self.add_game_event_info("uno_called", player)
+        return is_right_call
 
     # region Game Functions
 
@@ -154,6 +204,13 @@ class UnoGame:
         self.get_next_player().set_is_turn(True)
         self.current_player_idx += self.direction + self.player_number
         self.current_player_idx %= self.player_number
+
+    def check_uno_called(self, player):
+        if player.get_is_uno() and not player.get_uno_success():
+            self.draw_card(player)
+            self.next_turn()
+            return False
+        return True
 
     def prev_turn(self):
         self.get_current_player().set_is_turn(False)
@@ -171,7 +228,10 @@ class UnoGame:
 
     def turn_time_out(self):
         player = self.get_current_player()
-        self.auto_turn(player)
+        if player.is_com():
+            self.auto_turn(player)
+        else:
+            self.draw_card(player)
 
     # def uno(self, player):
 

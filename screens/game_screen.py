@@ -12,7 +12,7 @@ from utils.color_conversion import rgb
 from animations.move_animation import MoveAnimation
 from utils.constants import SCREEN as S, SIZE_RATIO as SR, SOUND, MUSIC
 from game.uno_constants import COLORS
-import copy
+import copy, time
 
 
 class GameScreen(Screen):
@@ -29,7 +29,6 @@ class GameScreen(Screen):
         self.my_hand_surface = None
         self.board_surface = None
         self.com_hand_surfaces = []
-
         self.pos = {
             "discard": (500, 200),
             "deck": (300, 200),
@@ -41,6 +40,11 @@ class GameScreen(Screen):
         # Board
         self.uno_button = None
         self.deck_render = None
+        self.message_box = None
+
+        # message_box
+        self.message_timer = Timer()
+        self.message_time = 2
 
         # color_picker
         self.color_picker_on = False
@@ -69,9 +73,10 @@ class GameScreen(Screen):
         self.sounds = {
             "card_move": pygame.mixer.Sound(SOUND.CARD_MOVE),
             "card_flip": pygame.mixer.Sound(SOUND.CARD_FLIP),
-            "card_error": pygame.mixer.Sound(SOUND.CARD_ERROR),
+            "error": pygame.mixer.Sound(SOUND.ERROR),
+            "uno": pygame.mixer.Sound(SOUND.UNO),
         }
-
+        self.update_options()
         # card_selection
         self.hovered_card_render = None
         self.hovered_card_render_idx = None
@@ -237,10 +242,20 @@ class GameScreen(Screen):
                 )
             )
 
+    def create_message_box(self):
+        self.message_box = TextBox(
+            x=350,
+            y=80,
+            font_size=30,
+            text="",
+            **self.rect_params,
+        )
+
     def create_board(self):
         self.create_uno_button()
         self.create_deck_render()
         self.create_color_picker()
+        self.create_message_box()
 
     # endregion
 
@@ -256,11 +271,27 @@ class GameScreen(Screen):
     def draw_player(self, surface, player, is_me):
         FONT_SIZE = 35 if is_me else 20
         text_params = {"font_size": FONT_SIZE, "reposition": False} | self.rect_params
+        self.draw_player_turn(surface, player.get_is_turn())
         self.draw_player_name(surface, player.name, text_params)
         self.draw_player_card_number(surface, len(player.hand), text_params)
         if player.is_turn:
             self.draw_turn_timer(surface, text_params)
         pass
+
+    def draw_player_turn(self, surface, is_turn):
+        # draw turn indicator
+        if is_turn:
+            pygame.draw.rect(
+                surface,
+                "red",
+                (
+                    0,
+                    0,
+                    surface.get_width(),
+                    surface.get_height(),
+                ),
+                3,
+            )
 
     def draw_player_name(self, surface, player_name, text_params):
         S_HEIGHT = surface.get_height()
@@ -293,6 +324,7 @@ class GameScreen(Screen):
         self.draw_top_discard_card_color(self.board_surface, self.game.get_top_color())
         self.uno_button.draw(self.board_surface)
         self.deck_render.draw(self.board_surface)
+        self.message_box.draw(self.board_surface)
         if self.color_picker_on:
             self.draw_color_picker(self.board_surface)
 
@@ -372,8 +404,8 @@ class GameScreen(Screen):
 
     def update(self):
         super().update()
+        self.game.set_game_time(time.time())
         self.update_animations_finished()
-        self.add_game_animations()
         for card_render in self.card_renders:
             card_render.update()
         self.update_hovered_card_render()
@@ -385,15 +417,17 @@ class GameScreen(Screen):
     # Events
     def process_events(self):
         super().process_events()
+        if self.turn_timer.is_finished():
+            self.game.turn_time_out()
+            self.end_turn()
+        self.add_game_animations()
         if self.animations:
             self.turn_timer.pause()
             return
         self.turn_timer.resume()
         self.process_game_events()
-        # handle player turn timer
-        if self.turn_timer.is_finished():
-            self.game.turn_time_out()
-            self.end_turn()
+        if self.message_timer.is_finished():
+            self.hide_message()
 
     # region Animations
     def add_game_animations(self):
@@ -417,6 +451,33 @@ class GameScreen(Screen):
             )
         )
 
+    def find_card_render(self, card):
+        for card_render in self.card_renders:
+            if card_render.card == card:
+                return card_render
+        deck_render_copy = copy.deepcopy(self.deck_render)
+        self.animation_card_renders.append(deck_render_copy)
+        return deck_render_copy
+
+    def card_move_animation_update(self, animation):
+        info = animation.move_info
+        animation.set_dest_pos(self.find_dest_pos(info["dest"]))
+
+    def find_dest_pos(self, dest):
+        if dest == "deck":
+            return self.update_pos(self.pos["deck"])
+        elif dest == "discard":
+            return self.update_pos(self.pos["discard"])
+        elif dest.startswith("player"):
+            if dest == "player_0":
+                return self.my_player.get_next_card_pos()
+            else:
+                return self.coms[int(dest[-1]) - 1].get_next_card_pos()
+
+    def update_pos(self, pos):
+        result = tuple(x * SR[self.screen_size] for x in pos)
+        return result
+
     def update_animations_finished(self):
         animations = []
         for i, animation in enumerate(self.animations):
@@ -434,33 +495,6 @@ class GameScreen(Screen):
                 animations.append(animation)
         self.animations = animations
 
-    def card_move_animation_update(self, animation):
-        info = animation.move_info
-        animation.set_dest_pos(self.find_dest_pos(info["dest"]))
-
-    def find_card_render(self, card):
-        for card_render in self.card_renders:
-            if card_render.card == card:
-                return card_render
-        deck_render_copy = copy.deepcopy(self.deck_render)
-        self.animation_card_renders.append(deck_render_copy)
-        return deck_render_copy
-
-    def find_dest_pos(self, dest):
-        if dest == "deck":
-            return self.update_pos(self.pos["deck"])
-        elif dest == "discard":
-            return self.update_pos(self.pos["discard"])
-        elif dest.startswith("player"):
-            if dest == "player_0":
-                return self.my_player.get_next_card_pos()
-            else:
-                return self.coms[int(dest[-1]) - 1].get_next_card_pos()
-
-    def update_pos(self, pos):
-        result = tuple(x * SR[self.screen_size] for x in pos)
-        return result
-
     # endregion
 
     def process_game_events(self):
@@ -469,7 +503,28 @@ class GameScreen(Screen):
                 self.game_over()
             if event_info["type"] == "color_change_request":
                 self.color_picker_on = True
+            if event_info["type"] == "uno_called":
+                self.show_message(
+                    f"{event_info['value'].get_name()} called uno!",
+                    time=self.message_time,
+                )
         self.game.set_game_event_infos([])
+
+        game_time = self.game.get_game_time()
+        for uno_called_time in self.game.get_uno_called_times():
+            if uno_called_time["time"] < game_time:
+                self.game.uno_called(uno_called_time["player"])
+                break
+
+    def show_message(self, message, time=1):
+        self.message_timer.set_timer(time)
+        self.message_timer.start()
+        self.message_box.set_text(message)
+        self.message_box.set_visible(True)
+
+    def hide_message(self):
+        self.message_box.set_visible(False)
+        self.message_timer.reset()
 
     # region game events
     def start_game(self):
@@ -486,6 +541,12 @@ class GameScreen(Screen):
 
     def end_turn(self):
         self.game.next_turn()
+        current_player = self.game.get_current_player()
+        if not self.game.check_uno_called(current_player):
+            self.show_message(
+                f"{current_player.get_name()} didn't call uno!",
+                time=self.message_time,
+            )
         if self.game.get_current_player() == self.my_player:
             self.my_turn()
         else:
@@ -545,6 +606,8 @@ class GameScreen(Screen):
     def handle_mouse_click(self, event):
         if self.animations:
             return
+        if self.uno_button.is_on_mouse(event.pos):
+            self.uno()
         if self.color_picker_on:
             if self.hovered_color_picker_button_idx is not None:
                 self.color_pick(self.hovered_color_picker_button_idx)
@@ -553,8 +616,6 @@ class GameScreen(Screen):
                 self.card_play(self.hovered_card_render)
             if self.deck_render.is_on_mouse(event.pos):
                 self.draw_card_from_deck()
-            if self.uno_button.is_on_mouse(event.pos):
-                self.uno()
 
     def pause(self):
         pause_screen = PausedMenuScreen(self.screen, self.clock, self.options)
@@ -565,7 +626,11 @@ class GameScreen(Screen):
         self.create_board()
 
     def uno(self):
-        print("uno")
+        is_uno = self.game.uno_called(self.my_player)
+        if is_uno:
+            self.sounds["uno"].play()
+        else:
+            self.sounds["error"].play()
 
     def color_pick(self, idx):
         color = COLORS[idx]
@@ -583,7 +648,7 @@ class GameScreen(Screen):
                     if self.game.get_game_event_infos() == []:
                         self.end_turn()
                 else:
-                    self.sounds["card_error"].play()
+                    self.sounds["error"].play()
         except Exception as e:
             print(e)
 

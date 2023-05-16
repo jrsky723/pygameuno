@@ -11,6 +11,27 @@ class UnoPlayer:
         self.hand = []
         self.is_turn = False
         self.next_card_pos = (0, 0)
+        self.is_uno = False
+        self.uno_checked = False
+        self.uno_success = False
+
+    def set_uno_success(self, uno_success):
+        self.uno_success = uno_success
+
+    def get_uno_success(self):
+        return self.uno_success
+
+    def get_is_uno(self):
+        return self.is_uno
+
+    def set_is_uno(self, is_uno):
+        self.is_uno = is_uno
+
+    def set_uno_checked(self, uno_checked):
+        self.uno_checked = uno_checked
+
+    def get_uno_checked(self):
+        return self.uno_checked
 
     def set_next_card_pos(self, pos):
         self.next_card_pos = pos
@@ -65,3 +86,6 @@ class UnoPlayer:
 
     def is_human(self):
         return True
+
+    def is_com(self):
+        return False
