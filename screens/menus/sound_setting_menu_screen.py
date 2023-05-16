@@ -32,7 +32,7 @@ class SoundSettingMenuScreen(MenuScreen):
             Button(x=B_X + B_GAP * 2, text="+", **game_volume_params),
         ]
         self.game_volume = TextBox(
-            x=B_X + B_GAP, text=str(self.sound["volume"]), **game_volume_params
+            x=B_X + B_GAP, text=str(self.sound_option["volume"]), **game_volume_params
         )
         self.texts.append(self.game_volume)
         self.button_sections.append(self.game_volume_buttons)
@@ -44,7 +44,7 @@ class SoundSettingMenuScreen(MenuScreen):
             Button(x=B_X + B_GAP * 2, text="+", **music_params),
         ]
         self.music = TextBox(
-            x=B_X + B_GAP, text=str(self.sound["music"]), **music_params
+            x=B_X + B_GAP, text=str(self.sound_option["music"]), **music_params
         )
         self.texts.append(self.music)
         self.button_sections.append(self.music_buttons)
@@ -56,7 +56,9 @@ class SoundSettingMenuScreen(MenuScreen):
             Button(x=B_X + B_GAP * 2, text="+", **sound_effects_params),
         ]
         self.sound_effects = TextBox(
-            x=B_X + B_GAP, text=str(self.sound["effects"]), **sound_effects_params
+            x=B_X + B_GAP,
+            text=str(self.sound_option["effects"]),
+            **sound_effects_params
         )
         self.texts.append(self.sound_effects)
         self.button_sections.append(self.sound_effects_buttons)
@@ -85,22 +87,22 @@ class SoundSettingMenuScreen(MenuScreen):
             return
         if button in self.game_volume_buttons:
             if button.text == "+":
-                self.sound["volume"] = min(self.sound["volume"] + 1, 10)
+                self.sound_option["volume"] = min(self.sound_option["volume"] + 1, 10)
             else:
-                self.sound["volume"] = max(self.sound["volume"] - 1, 0)
-            self.game_volume.text = str(self.sound["volume"])
+                self.sound_option["volume"] = max(self.sound_option["volume"] - 1, 0)
+            self.game_volume.text = str(self.sound_option["volume"])
         elif button in self.music_buttons:
             if button.text == "+":
-                self.sound["music"] = min(self.sound["music"] + 1, 10)
+                self.sound_option["music"] = min(self.sound_option["music"] + 1, 10)
             else:
-                self.sound["music"] = max(self.sound["music"] - 1, 0)
-            self.music.text = str(self.sound["music"])
+                self.sound_option["music"] = max(self.sound_option["music"] - 1, 0)
+            self.music.text = str(self.sound_option["music"])
         elif button in self.sound_effects_buttons:
             if button.text == "+":
-                self.sound["effects"] = min(self.sound["effects"] + 1, 10)
+                self.sound_option["effects"] = min(self.sound_option["effects"] + 1, 10)
             else:
-                self.sound["effects"] = max(self.sound["effects"] - 1, 0)
-            self.sound_effects.text = str(self.sound["effects"])
+                self.sound_option["effects"] = max(self.sound_option["effects"] - 1, 0)
+            self.sound_effects.text = str(self.sound_option["effects"])
 
     def button_click_up(self, button):
         super().button_click_up(button)

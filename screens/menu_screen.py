@@ -15,11 +15,13 @@ class MenuScreen(Screen):
         self.button_sections, self.texts = [], []
         self.hovered_button = None
         self.button_key_pos = None
-        self.button_click_sound = pygame.mixer.Sound(SOUND.BUTTON_CLICK)
-        self.button_click_sound.set_volume(self.sound_effects_volume)
+        self.sounds = {
+            "button_click": pygame.mixer.Sound(SOUND.BUTTON_CLICK),
+        }
         self.input_mode = False
         self.input_boxes = []
         self.selected_input_box = None
+        self.update_options()
 
     def find_hovered_button(self, pos):
         for i, section in enumerate(self.button_sections):
@@ -125,7 +127,7 @@ class MenuScreen(Screen):
     def button_click_down(self, button):
         if button:
             button.click()
-            self.button_click_sound.play()
+            self.sounds["button_click"].play()
             if button in self.input_boxes:
                 if button.selected:
                     button.unselect()

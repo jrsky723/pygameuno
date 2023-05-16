@@ -9,21 +9,37 @@ class Screen:
         self.screen = screen
         self.options = options
         self.clock = clock
-        self.screen_size = options["screen_size"]
-        self.color_blind = options["color_blind"]
-        self.key_bindings = options["key_bindings"]
-        self.sound = options["sound"]
+        self.sounds = {}
+        self.running = True
+        self.update_options()
+
+    def update_options(self):
+        self.screen_size = self.options["screen_size"]
+        self.color_blind = self.options["color_blind"]
+        self.key_bindings = self.options["key_bindings"]
+        self.sound_option = self.options["sound"]
+        self.background_music_volume = (
+            self.sound_option["volume"] * self.sound_option["music"] / 100
+        )
+        self.sound_effects_volume = (
+            self.sound_option["volume"] * self.sound_option["effects"] / 100
+        )
+        pygame.mixer.music.set_volume(self.background_music_volume)
+        for sound in self.sounds.values():
+            sound.set_volume(self.sound_effects_volume)
         self.rect_params = {
             "screen_size": self.screen_size,
             "color_blind": self.color_blind,
         }
-        self.screen_width = screen.get_width()
-        self.screen_height = screen.get_height()
+        self.background_music_volume = (
+            self.sound_option["volume"] * self.sound_option["music"] / 100
+        )
+        self.sound_effects_volume = (
+            self.sound_option["volume"] * self.sound_option["effects"] / 100
+        )
+        self.screen_width = self.screen.get_width()
+        self.screen_height = self.screen.get_height()
         self.background_color = rgb(S.BACKGROUND_COLOR, self.color_blind)
-        self.running = True
-        self.background_music_volume = self.sound["volume"] * self.sound["music"] / 100
-        self.sound_effects_volume = self.sound["volume"] * self.sound["effects"] / 100
-        pygame.mixer.music.set_volume(self.background_music_volume)
 
     def move_up(self):
         pass

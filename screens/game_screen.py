@@ -29,19 +29,7 @@ class GameScreen(Screen):
         self.my_hand_surface = None
         self.board_surface = None
         self.com_hand_surfaces = []
-        self.board_surface_const = {
-            "pos": (0, 0),
-            "size": (self.screen_width * (3 / 4), self.screen_height * (7 / 10)),
-        }
-        self.my_hand_surface_const = {
-            "pos": (0, self.screen_height * (7 / 10)),
-            "size": (self.screen_width * (3 / 4), self.screen_height * (3 / 10)),
-        }
-        self.com_hand_surface_const = {
-            "pos": (self.screen_width * (3 / 4), 0),
-            "size": (self.screen_width / 4, self.screen_height / 5),
-            "gap": (self.screen_height / 5),
-        }
+
         self.pos = {
             "discard": (500, 200),
             "deck": (300, 200),
@@ -78,13 +66,11 @@ class GameScreen(Screen):
         self.animations = []
 
         # sound
-        self.sound = {
+        self.sounds = {
             "card_move": pygame.mixer.Sound(SOUND.CARD_MOVE),
             "card_flip": pygame.mixer.Sound(SOUND.CARD_FLIP),
             "card_error": pygame.mixer.Sound(SOUND.CARD_ERROR),
         }
-        for sound in self.sound.values():
-            sound.set_volume(self.sound_effects_volume)
 
         # card_selection
         self.hovered_card_render = None
@@ -97,8 +83,22 @@ class GameScreen(Screen):
     # region Create functions
 
     def create_surfaces(self):
+        self.board_surface_const = {
+            "pos": (0, 0),
+            "size": (self.screen_width * (3 / 4), self.screen_height * (7 / 10)),
+        }
+        self.my_hand_surface_const = {
+            "pos": (0, self.screen_height * (7 / 10)),
+            "size": (self.screen_width * (3 / 4), self.screen_height * (3 / 10)),
+        }
+        self.com_hand_surface_const = {
+            "pos": (self.screen_width * (3 / 4), 0),
+            "size": (self.screen_width / 4, self.screen_height / 5),
+            "gap": (self.screen_height / 5),
+        }
         self.my_hand_surface = pygame.Surface(self.my_hand_surface_const["size"])
         self.board_surface = pygame.Surface(self.board_surface_const["size"])
+        self.com_hand_surfaces = []
         for _ in range(self.max_players - 1):
             self.com_hand_surfaces.append(
                 pygame.Surface(self.com_hand_surface_const["size"])
@@ -505,7 +505,7 @@ class GameScreen(Screen):
         animation.set_sound_played(True)
         # CHECK ANIMATION CLASS NAME
         if animation.__class__.__name__ == "MoveAnimation":
-            self.sound["card_move"].play()
+            self.sounds["card_move"].play()
 
     # region User Input
 
@@ -558,8 +558,11 @@ class GameScreen(Screen):
 
     def pause(self):
         pause_screen = PausedMenuScreen(self.screen, self.clock, self.options)
-        pause_screen.run()
-        self.screen = pause_screen.screen
+        pause_screen_options = pause_screen.run()
+        self.options = pause_screen_options
+        self.update_options()
+        self.create_surfaces()
+        self.create_board()
 
     def uno(self):
         print("uno")
@@ -576,11 +579,11 @@ class GameScreen(Screen):
                 played = self.game.play_card(self.my_player, card_render.card)
                 if played:
                     self.hovered_card_render = None
-                    self.sound["card_flip"].play()
+                    self.sounds["card_flip"].play()
                     if self.game.get_game_event_infos() == []:
                         self.end_turn()
                 else:
-                    self.sound["card_error"].play()
+                    self.sounds["card_error"].play()
         except Exception as e:
             print(e)
 
@@ -589,7 +592,7 @@ class GameScreen(Screen):
             if self.game.get_current_player() == self.my_player:
                 self.game.draw_card(self.my_player)
                 self.end_turn()
-                self.sound["card_flip"].play()
+                self.sounds["card_flip"].play()
         except Exception as e:
             print(e)
 

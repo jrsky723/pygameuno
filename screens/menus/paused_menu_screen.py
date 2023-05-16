@@ -43,3 +43,7 @@ class PausedMenuScreen(MenuScreen):
         options_menu = OptionsMenuScreen(self.screen, self.clock, self.options)
         new_options = options_menu.run()
         self.__init__(self.screen, self.clock, new_options)
+
+    def run(self):
+        super().run()
+        return self.options

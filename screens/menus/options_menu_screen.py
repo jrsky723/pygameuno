@@ -117,7 +117,7 @@ class OptionsMenuScreen(MenuScreen):
     def save_options(self):
         new_options = {
             "screen_size": self.screen_size_selected_button.text,
-            "sound": self.sound,
+            "sound": self.sound_option,
             "key_bindings": self.options["key_bindings"],
             "color_blind": self.color_blind_selected_button.text == "ON",
         }
