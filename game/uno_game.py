@@ -60,7 +60,7 @@ class UnoGame:
         random.shuffle(self.deck)
 
     # Deal 7 cards to each player in turns.
-    def _deal_cards(self, num_cards=7):
+    def _deal_cards(self, num_cards=5):
         for i in range(num_cards):
             for player in self.players:
                 self.add_card_move_animation(
@@ -172,6 +172,8 @@ class UnoGame:
     def turn_time_out(self):
         player = self.get_current_player()
         self.auto_turn(player)
+
+    # def uno(self, player):
 
     # endregion
 

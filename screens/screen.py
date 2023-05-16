@@ -56,8 +56,18 @@ class Screen:
     def handle_function_keys(self, event):
         if event.key == pygame.key.key_code(self.key_bindings["draw"]):
             self.draw_card_from_deck()
+        elif event.key == pygame.key.key_code(self.key_bindings["escape"]):
+            self.pause()
+        elif event.key == pygame.key.key_code(self.key_bindings["uno"]):
+            self.uno()
 
     def draw_card_from_deck(self):
+        pass
+
+    def pause(self):
+        pass
+
+    def uno(self):
         pass
 
     def handle_return_down(self, event):

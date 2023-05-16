@@ -26,17 +26,13 @@ class KeySettingMenuScreen(MenuScreen):
         ############### TEXTS ################
         T_X, T_Y, T_GAP = 110, 220, 70
         text_params = self.rect_params | {"x": T_X, "font_size": 30}
-        self.texts += [
-            TextBox(y=T_Y, text="UP", **text_params),
-            TextBox(y=T_Y + T_GAP, text="DOWN", **text_params),
-            TextBox(y=T_Y + T_GAP * 2, text="LEFT", **text_params),
-            TextBox(y=T_Y + T_GAP * 3, text="RIGHT", **text_params),
-            TextBox(y=T_Y + T_GAP * 4, text="RETURN", **text_params),
-        ]
-        text_params["x"] = 720
-        self.texts += [
-            TextBox(y=T_Y, text="DRAW", **text_params),
-        ]
+        # just 5 keys in key_bindings using for loop
+
+        for i, key in enumerate(self.key_bindings):
+            text_params["x"] = 720 if i >= 5 else text_params["x"]
+            self.texts += [
+                TextBox(y=T_Y + T_GAP * (i % 5), text=key.upper(), **text_params)
+            ]
 
         ############ Error #################
         error_params = self.rect_params | {
@@ -60,42 +56,18 @@ class KeySettingMenuScreen(MenuScreen):
         }
         B_X2 = 900
 
-        self.button_sections += [
-            [
-                Button(y=B_Y, text=self.key_bindings["up"], **key_button_params),
-                Button(
-                    y=B_Y,
-                    text=self.key_bindings["draw"],
-                    **key_button_params | {"x": B_X2},
-                ),
-            ],
-            [
-                Button(
-                    y=B_Y + B_GAP, text=self.key_bindings["down"], **key_button_params
-                )
-            ],
-            [
-                Button(
-                    y=B_Y + B_GAP * 2,
-                    text=self.key_bindings["left"],
-                    **key_button_params,
-                )
-            ],
-            [
-                Button(
-                    y=B_Y + B_GAP * 3,
-                    text=self.key_bindings["right"],
-                    **key_button_params,
-                )
-            ],
-            [
-                Button(
-                    y=B_Y + B_GAP * 4,
-                    text=self.key_bindings["return"],
-                    **key_button_params,
-                )
-            ],
-        ]
+        # make below code shorter
+        for i, key in enumerate(self.key_bindings):
+            y_position = B_Y + B_GAP * (i % 5)
+            key_button_params["x"] = B_X2 if i >= 5 else B_X
+            button = Button(
+                y=y_position, text=self.key_bindings[key], **key_button_params
+            )
+            section_index = i % 5
+            if i < 5:
+                self.button_sections.append([button])
+            else:
+                self.button_sections[section_index] += [button]
 
         ########    SAVE AND BACK BUTTONS   ########
         S_B_GAP, S_B_WIDTH, S_B_HEIGHT = 400, 200, 50
@@ -153,13 +125,14 @@ class KeySettingMenuScreen(MenuScreen):
                 self.save_options()
 
     def save_options(self):
-        new_key_bindings = {
-            "up": self.button_sections[0][0].text,
-            "down": self.button_sections[1][0].text,
-            "left": self.button_sections[2][0].text,
-            "right": self.button_sections[3][0].text,
-            "return": self.button_sections[4][0].text,
-        }
+        # use for loop to make new_key_bindings
+        new_key_bindings = {}
+        for i, key in enumerate(self.key_bindings):
+            if i < 5:
+                new_key_bindings[key] = self.button_sections[i][0].text
+            else:
+                new_key_bindings[key] = self.button_sections[i % 5][1].text
+
         if self.check_duplicated_key(new_key_bindings):
             self.error_message.visible = True
             return

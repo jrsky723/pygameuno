@@ -2,6 +2,7 @@ import pygame
 from game.uno_game import UnoGame
 from screens.screen import Screen
 from screens.menus.end_menu_screen import EndMenuScreen
+from screens.menus.paused_menu_screen import PausedMenuScreen
 from renders.card import Card
 from renders.text_box import TextBox
 from renders.button import Button
@@ -198,6 +199,7 @@ class GameScreen(Screen):
             text="UNO",
             font_size=20,
             text_color="black",
+            hover_background_color="darken",
             **self.rect_params,
         )
 
@@ -512,10 +514,19 @@ class GameScreen(Screen):
         if event.type == pygame.MOUSEMOTION:
             pos = event.pos
             self.find_hoverd_card_idx(pos)
+            self.handle_uno_button_hover(pos)
             if self.color_picker_on:
                 self.find_hovered_color_picker_button_idx(pos)
         elif event.type == pygame.MOUSEBUTTONDOWN:
             self.handle_mouse_click(event)
+
+    def handle_uno_button_hover(self, pos):
+        if self.uno_button.is_on_mouse(pos):
+            self.uno_button.hover()
+            self.uno_button.update()
+        else:
+            self.uno_button.unhover()
+            self.uno_button.update()
 
     def find_hoverd_card_idx(self, pos):
         for i, card_render in enumerate(self.my_hand_card_renders):
@@ -542,6 +553,16 @@ class GameScreen(Screen):
                 self.card_play(self.hovered_card_render)
             if self.deck_render.is_on_mouse(event.pos):
                 self.draw_card_from_deck()
+            if self.uno_button.is_on_mouse(event.pos):
+                self.uno()
+
+    def pause(self):
+        pause_screen = PausedMenuScreen(self.screen, self.clock, self.options)
+        pause_screen.run()
+        self.screen = pause_screen.screen
+
+    def uno(self):
+        print("uno")
 
     def color_pick(self, idx):
         color = COLORS[idx]

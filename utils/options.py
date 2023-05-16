@@ -3,6 +3,7 @@ import pygame
 
 DEFAULT_OPTIONS = {
     "screen_size": "medium",
+    "color_blind": False,
     "sound": {
         "volume": 10,
         "music": 10,
@@ -15,8 +16,9 @@ DEFAULT_OPTIONS = {
         "right": "right",
         "return": "return",
         "draw": "d",
+        "escape": "escape",
+        "uno": "u",
     },
-    "color_blind": False,
 }
 
 
