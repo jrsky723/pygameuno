@@ -2,7 +2,7 @@ import pygame
 from screens.menu_screen import MenuScreen
 from renders.button import Button
 from renders.text_box import TextBox
-from utils.options import save_options_json
+from utils.json import save_json
 from utils.constants import SCREEN as S
 
 
@@ -139,7 +139,7 @@ class KeySettingMenuScreen(MenuScreen):
         else:
             self.error_message.visible = False
         self.options["key_bindings"] = new_key_bindings
-        save_options_json(self.options)
+        save_json("options", self.options)
         self.__init__(self.screen, self.clock, self.options)
 
     # returns True if there are no duplicated keyname

@@ -4,7 +4,7 @@ from screens.menus.key_setting_menu_screen import KeySettingMenuScreen
 from screens.menus.sound_setting_menu_screen import SoundSettingMenuScreen
 from renders.button import Button
 from renders.text_box import TextBox
-from utils.options import save_options_json, DEFAULT_OPTIONS
+from utils.json import save_json, DEFAULT_OPTIONS
 from utils.constants import SCREEN as S
 import os
 
@@ -122,7 +122,7 @@ class OptionsMenuScreen(MenuScreen):
             "color_blind": self.color_blind_selected_button.text == "ON",
         }
         self.options = new_options
-        save_options_json(new_options)
+        save_json("options", new_options)
         if new_options["screen_size"] != self.screen_size:
             self.change_screen_size(new_options["screen_size"])
         self.__init__(self.screen, self.clock, new_options)
@@ -150,7 +150,7 @@ class OptionsMenuScreen(MenuScreen):
 
     def reset_options(self):
         self.options = DEFAULT_OPTIONS
-        save_options_json(self.options)
+        save_json("options", self.options)
         if self.options["screen_size"] != self.screen_size:
             self.change_screen_size(self.options["screen_size"])
         self.__init__(self.screen, self.clock, self.options)

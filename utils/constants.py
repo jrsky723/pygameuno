@@ -20,18 +20,24 @@ class SCREEN:
     FPS = 60
 
 
+# PATHS
+
+SOUNDS_PATH = os.path.join("assets", "sounds")
+
+
 class SOUND:
     # SOUND
-    BUTTON_CLICK = "assets/sounds/button_click.mp3"
-    CARD_MOVE = "assets/sounds/card_move.mp3"
-    CARD_FLIP = "assets/sounds/card_flip.mp3"
-    ERROR = "assets/sounds/error.mp3"
-    UNO = "assets/sounds/uno.mp3"
+    BUTTON_CLICK = os.path.join(SOUNDS_PATH, "button_click.mp3")
+    CARD_MOVE = os.path.join(SOUNDS_PATH, "card_move.mp3")
+    CARD_FLIP = os.path.join(SOUNDS_PATH, "card_flip.mp3")
+    ERROR = os.path.join(SOUNDS_PATH, "error.mp3")
+    UNO = os.path.join(SOUNDS_PATH, "uno.mp3")
+    # change path to os path
 
 
 class MUSIC:
-    MENU_BACKGROUND = "assets/sounds/sinnesloschen-beam.mp3"
-    GAME_BACKGROUND = "assets/sounds/cool-jazz-loops-2641.mp3"
+    MENU_BACKGROUND = os.path.join(SOUNDS_PATH, "sinnesloschen-beam.mp3")
+    GAME_BACKGROUND = os.path.join(SOUNDS_PATH, "cool-jazz-loops-2641.mp3")
 
 
 # Colors
@@ -107,8 +113,3 @@ class INPUTBOX:
     BORDER_WIDTH = 0
     HOVERED_BORDER_WIDTH = 2
     SELECTED_BORDER_WIDTH = 4
-
-
-# Directories
-ASSETS_DIR = os.path.join(os.path.dirname(__file__), "..", "assets")
-CARD_IMAGES_DIR = os.path.join(ASSETS_DIR, "card_images")

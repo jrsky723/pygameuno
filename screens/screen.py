@@ -22,7 +22,7 @@ class Screen:
             self.sound_option["volume"] * self.sound_option["music"] / 100
         )
         self.sound_effects_volume = (
-            self.sound_option["volume"] * self.sound_option["effects"] / 100
+             self.sound_option["volume"] * self.sound_option["effects"] / 100
         )
         pygame.mixer.music.set_volume(self.background_music_volume)
         for sound in self.sounds.values():

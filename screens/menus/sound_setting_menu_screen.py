@@ -2,7 +2,7 @@ import pygame
 from screens.menu_screen import MenuScreen
 from renders.button import Button
 from renders.text_box import TextBox
-from utils.options import save_options_json
+from utils.json import save_json
 from utils.constants import SCREEN as S
 
 
@@ -117,7 +117,7 @@ class SoundSettingMenuScreen(MenuScreen):
             "effects": int(self.sound_effects.text),
         }
         self.options["sound"] = new_sound_settings
-        save_options_json(self.options)
+        save_json("options", self.options)
         self.__init__(self.screen, self.clock, self.options)
 
     def run(self):
