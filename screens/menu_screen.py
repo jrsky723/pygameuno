@@ -53,6 +53,7 @@ class MenuScreen(Screen):
                 self.handle_input(event)
             else:
                 self.handle_movement(event)
+            self.handle_function_keys(event)
         elif event.type == pygame.KEYUP:
             self.handle_return_up(event)
 
@@ -152,6 +153,9 @@ class MenuScreen(Screen):
                 self.back()
             if button == self.save_button:
                 self.save_options()
+
+    def escape(self):
+        self.back()
 
     def save_options():
         pass

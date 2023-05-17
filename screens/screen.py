@@ -22,7 +22,7 @@ class Screen:
             self.sound_option["volume"] * self.sound_option["music"] / 100
         )
         self.sound_effects_volume = (
-             self.sound_option["volume"] * self.sound_option["effects"] / 100
+            self.sound_option["volume"] * self.sound_option["effects"] / 100
         )
         pygame.mixer.music.set_volume(self.background_music_volume)
         for sound in self.sounds.values():
@@ -73,14 +73,14 @@ class Screen:
         if event.key == pygame.key.key_code(self.key_bindings["draw"]):
             self.draw_card_from_deck()
         elif event.key == pygame.key.key_code(self.key_bindings["escape"]):
-            self.pause()
+            self.escape()
         elif event.key == pygame.key.key_code(self.key_bindings["uno"]):
             self.uno()
 
     def draw_card_from_deck(self):
         pass
 
-    def pause(self):
+    def escape(self):
         pass
 
     def uno(self):

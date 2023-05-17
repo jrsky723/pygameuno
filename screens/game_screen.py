@@ -16,13 +16,12 @@ import copy, time
 
 
 class GameScreen(Screen):
-    def __init__(self, screen, clock, options):
+    def __init__(self, screen, clock, options, players):
         super().__init__(screen, clock, options)
         pygame.mixer.music.load(MUSIC.GAME_BACKGROUND)
         pygame.mixer.music.play(-1)
-        self.com_players_number = 3
         self.max_players = 6
-        self.game = UnoGame(human_number=1, com_number=self.com_players_number)
+        self.game = UnoGame(players)
         self.my_player = self.game.get_player()
         self.coms = self.game.get_com_players()
         self.surfaces = []
@@ -617,7 +616,7 @@ class GameScreen(Screen):
             if self.deck_render.is_on_mouse(event.pos):
                 self.draw_card_from_deck()
 
-    def pause(self):
+    def escape(self):
         pause_screen = PausedMenuScreen(self.screen, self.clock, self.options)
         pause_screen_options = pause_screen.run()
         self.options = pause_screen_options

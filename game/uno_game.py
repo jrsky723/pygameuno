@@ -10,12 +10,12 @@ from game.uno_constants import COLORS, NUMBERS, COLOR_ACTION_VALUES, WILD_ACTION
 
 
 class UnoGame:
-    def __init__(self, human_number, com_number):
-        self.deck = self._create_deck()
-        self.player_number = human_number + com_number
-        self.human_number = human_number
-        self.com_number = com_number
+    def __init__(self, players_info):
+        self.deck = []
+        self.players_info = players_info
+        self.player_number = len(players_info)
         self.players = []
+        self.com_players = []
         self.discard_pile = []
         self.current_player_idx = 0
         self.direction = 1
@@ -45,8 +45,9 @@ class UnoGame:
         return self.game_time
 
     def _init_game(self):
+        self.deck = self._create_deck()
         UnoPlayer.init()
-        self._add_players()
+        self._add_players(self.players_info)
 
     # region Initializing Game Functions
 
@@ -76,7 +77,7 @@ class UnoGame:
         random.shuffle(self.deck)
 
     # Deal 7 cards to each player in turns.
-    def _deal_cards(self, num_cards=2):
+    def _deal_cards(self, num_cards=7):
         for i in range(num_cards):
             for player in self.players:
                 self.add_card_move_animation(
@@ -88,11 +89,16 @@ class UnoGame:
                 )
 
     # Add players to the game
-    def _add_players(self):
-        for i in range(self.human_number):
-            self.players.append(UnoPlayer(name="Player " + str(i + 1)))
-        for i in range(self.com_number):
-            self.players.append(UnoComPlayer(name="Computer " + str(i + 1)))
+    def _add_players(self, players_info):
+        for i, player in enumerate(players_info):
+            if player["is_com"]:
+                self.players.append(UnoComPlayer(player["name"]))
+            else:
+                self.players.append(UnoPlayer(player["name"]))
+
+        for player in self.players:
+            if player.is_com():
+                self.com_players.append(player)
 
     def _set_top_discard_card(self):
         self.add_card_move_animation(self.deck.pop(0), src="deck", dest="discard")
@@ -330,7 +336,7 @@ class UnoGame:
         return self.direction
 
     def get_com_players(self):
-        return self.players[self.human_number :]
+        return self.com_players
 
     def get_player(self):
         return self.players[0]

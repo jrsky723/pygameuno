@@ -41,3 +41,6 @@ class StartMenuScreen(MenuScreen):
         options_menu = OptionsMenuScreen(self.screen, self.clock, self.options)
         new_options = options_menu.run()
         self.__init__(self.screen, self.clock, new_options)
+
+    def escape(self):
+        pass

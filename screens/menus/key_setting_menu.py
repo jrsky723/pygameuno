@@ -91,6 +91,8 @@ class KeySettingMenuScreen(MenuScreen):
 
     def handle_key_event(self, event):
         if event.type == pygame.KEYDOWN:
+            self.handle_function_keys(event)
+            self.handle_return_down(event)
             if self.selected_button is not None:
                 self.handle_change_key(event)
             else:
@@ -98,12 +100,16 @@ class KeySettingMenuScreen(MenuScreen):
         elif event.type == pygame.KEYUP:
             self.handle_return_up(event)
 
+    def return_down(self):
+        if self.hovered_button in self.save_back_buttons:
+            self.button_click_down(self.hovered_button)
+
     def handle_change_key(self, event):
         self.selected_button.text = pygame.key.name(event.key)
 
     def button_click_down(self, button):
         super().button_click_down(button)
-        if button is None or button.text in ["SAVE", "BACK"]:
+        if button is None or button in self.save_back_buttons:
             return
         if self.selected_button is not None:
             if button is self.selected_button:
