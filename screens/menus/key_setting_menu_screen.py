@@ -81,9 +81,11 @@ class KeySettingMenuScreen(MenuScreen):
             "height": 50,
             "font_size": 40,
         }
+        self.save_button = Button(x=S_B_X, text="SAVE", **save_params)
+        self.back_button = Button(x=S_B_X + S_B_GAP, text="BACK", **save_params)
         self.save_back_buttons = [
-            Button(x=S_B_X, text="SAVE", **save_params),
-            Button(x=S_B_X + S_B_GAP, text="BACK", **save_params),
+            self.save_button,
+            self.back_button,
         ]
         self.button_sections.append(self.save_back_buttons)
 
@@ -117,12 +119,6 @@ class KeySettingMenuScreen(MenuScreen):
             self.selected_button.select()
             self.selected_button.unhover()
             self.no_movement = True
-
-    def button_click_up(self, button):
-        super().button_click_up(button)
-        if button is not None:
-            if button.text == "SAVE":
-                self.save_options()
 
     def save_options(self):
         # use for loop to make new_key_bindings

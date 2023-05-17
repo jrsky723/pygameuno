@@ -67,22 +67,19 @@ class OptionsMenuScreen(MenuScreen):
 
         ########    SAVE AND BACK BUTTONS   ########
         save_params = button_params | {"y": B_Y + T_GAP * 4, "width": 170}
+        self.save_button = Button(x=B_X, text="SAVE", **save_params)
+        self.back_button = Button(
+            x=B_X + B_GAP * 3 - save_params["width"], text="BACK", **save_params
+        )
+        self.reset_button = Button(
+            x=B_X + B_GAP * -3 + save_params["width"], text="RESET", **save_params
+        )
         self.save_back_buttons = [
-            Button(x=B_X, text="SAVE", **save_params),
-            Button(
-                x=B_X + B_GAP * 3 - save_params["width"], text="BACK", **save_params
-            ),
-            Button(
-                x=B_X + B_GAP * -3 + save_params["width"], text="RESET", **save_params
-            ),
+            self.save_button,
+            self.back_button,
+            self.reset_button,
         ]
         self.button_sections.append(self.save_back_buttons)
-
-        """ ######## RESET BUTTON ########
-        reset_params = button_params | {"y": B_Y + T_GAP * 4, "width": 170}
-        self.reset_button = Button(x=B_X + B_GAP * -3 + save_params["width"], text="RESET", **reset_params)
-        self.button_sections.append([self.reset_button])
-        """
 
     # Handle events
     def button_click_down(self, button):
@@ -101,9 +98,7 @@ class OptionsMenuScreen(MenuScreen):
     def button_click_up(self, button):
         super().button_click_up(button)
         if button is not None:
-            if button.text == "SAVE":
-                self.save_options()
-            elif button.text == "RESET":
+            if button == self.reset_button:
                 self.reset_options()
             elif button in self.key_settings_buttons:
                 self.open_key_settings()

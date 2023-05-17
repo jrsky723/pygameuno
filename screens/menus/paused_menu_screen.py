@@ -31,7 +31,7 @@ class PausedMenuScreen(MenuScreen):
             elif button == self.options_button:
                 self.open_options()
             elif button == self.quit_button:
-                self.quit()
+                self.open_start_menu()
 
     def resume(self):
         pygame.mixer.music.unpause()
@@ -43,6 +43,14 @@ class PausedMenuScreen(MenuScreen):
         options_menu = OptionsMenuScreen(self.screen, self.clock, self.options)
         new_options = options_menu.run()
         self.__init__(self.screen, self.clock, new_options)
+
+    def open_start_menu(self):
+        from screens.menus.start_menu_screen import StartMenuScreen
+
+        pygame.mixer.music.load(M.MENU_BACKGROUND)
+        pygame.mixer.music.play(-1)
+        start_menu = StartMenuScreen(self.screen, self.clock, self.options)
+        start_menu.run()
 
     def run(self):
         super().run()

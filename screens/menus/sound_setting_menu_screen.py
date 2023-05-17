@@ -75,9 +75,11 @@ class SoundSettingMenuScreen(MenuScreen):
             "height": 50,
             "font_size": 40,
         }
+        self.save_button = Button(x=S_B_X, text="SAVE", **save_params)
+        self.back_button = Button(x=S_B_X + S_B_GAP, text="BACK", **save_params)
         self.save_back_buttons = [
-            Button(x=S_B_X, text="SAVE", **save_params),
-            Button(x=S_B_X + S_B_GAP, text="BACK", **save_params),
+            self.save_button,
+            self.back_button,
         ]
         self.button_sections.append(self.save_back_buttons)
 
@@ -103,12 +105,6 @@ class SoundSettingMenuScreen(MenuScreen):
             else:
                 self.sound_option["effects"] = max(self.sound_option["effects"] - 1, 0)
             self.sound_effects.text = str(self.sound_option["effects"])
-
-    def button_click_up(self, button):
-        super().button_click_up(button)
-        if button is not None:
-            if button.text == "SAVE":
-                self.save_options()
 
     def save_options(self):
         new_sound_settings = {

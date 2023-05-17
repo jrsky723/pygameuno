@@ -21,6 +21,9 @@ class MenuScreen(Screen):
         self.input_mode = False
         self.input_boxes = []
         self.selected_input_box = None
+        self.quit_button = None
+        self.back_button = None
+        self.save_button = None
         self.update_options()
 
     def find_hovered_button(self, pos):
@@ -143,5 +146,12 @@ class MenuScreen(Screen):
     def button_click_up(self, button):
         if button is not None:
             button.unclick()
-            if button.text == "BACK":
+            if button == self.quit_button:
+                self.quit()
+            if button == self.back_button:
                 self.back()
+            if button == self.save_button:
+                self.save_options()
+
+    def save_options():
+        pass
