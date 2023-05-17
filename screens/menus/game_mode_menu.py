@@ -1,6 +1,6 @@
 from screens.menu_screen import MenuScreen
-from screens.game_screen import GameScreen
-from screens.menus.multiplay_menu_screen import MultiplayerMenuScreen
+from screens.menus.singleplay_menu import SingleplayMenuScreen
+from screens.menus.multiplay_menu import MultiplayMenuScreen
 from renders.button import Button
 from renders.text_box import TextBox
 
@@ -35,12 +35,14 @@ class GameModeMenuScreen(MenuScreen):
                 self.back()
 
     def open_single_player(self):
-        game_screen = GameScreen(self.screen, self.clock, self.options)
-        game_screen.run()
+        single_mode_menu_screen = SingleplayMenuScreen(
+            self.screen, self.clock, self.options
+        )
+        single_mode_menu_screen.run()
         pass
 
     def open_multiplayer(self):
-        multiplayer_menu_screen = MultiplayerMenuScreen(
+        multiplayer_menu_screen = MultiplayMenuScreen(
             self.screen, self.clock, self.options
         )
         multiplayer_menu_screen.run()

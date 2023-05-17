@@ -39,7 +39,7 @@ class EndMenuScreen(MenuScreen):
                 self.quit()
 
     def open_home(self):
-        from screens.menus.start_menu_screen import StartMenuScreen
+        from screens.menus.start_menu import StartMenuScreen
 
         pygame.init()
         pygame.mixer.init()

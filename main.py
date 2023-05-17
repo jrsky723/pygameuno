@@ -1,5 +1,5 @@
 import pygame
-from screens.menus.start_menu_screen import StartMenuScreen
+from screens.menus.start_menu import StartMenuScreen
 from utils.json import load_json
 from utils.constants import SCREEN as S, MUSIC as M
 

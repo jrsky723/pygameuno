@@ -49,7 +49,7 @@ players_sample = [
 
 
 # TODO: lobby screen, player list, password, start button, back button
-class LobbyMenuScreen(MenuScreen):
+class MultiplayLobbyMenuScreen(MenuScreen):
     def __init__(self, screen, clock, options, isHost):
         super().__init__(screen, clock, options)
         self.is_host = isHost
@@ -257,9 +257,7 @@ class LobbyMenuScreen(MenuScreen):
     def button_click_up(self, button):
         super().button_click_up(button)
         if button != None:
-            if button == self.back_button:
-                self.back()
-            elif button == self.ready_button:
+            if button == self.ready_button:
                 self.ready()
             elif button == self.name_change_button:
                 self.change_name()

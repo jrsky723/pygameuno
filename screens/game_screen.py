@@ -1,8 +1,8 @@
 import pygame
 from game.uno_game import UnoGame
 from screens.screen import Screen
-from screens.menus.end_menu_screen import EndMenuScreen
-from screens.menus.paused_menu_screen import PausedMenuScreen
+from screens.menus.end_menu_ import EndMenuScreen
+from screens.menus.paused_menu import PausedMenuScreen
 from renders.card import Card
 from renders.text_box import TextBox
 from renders.button import Button

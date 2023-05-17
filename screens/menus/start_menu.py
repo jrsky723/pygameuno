@@ -1,6 +1,6 @@
 from screens.menu_screen import MenuScreen
-from screens.menus.game_mode_menu_screen import GameModeMenuScreen
-from screens.menus.options_menu_screen import OptionsMenuScreen
+from screens.menus.game_mode_menu import GameModeMenuScreen
+from screens.menus.options_menu import OptionsMenuScreen
 from renders.button import Button
 from renders.text_box import TextBox
 

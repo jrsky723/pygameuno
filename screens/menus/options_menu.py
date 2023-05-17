@@ -1,7 +1,7 @@
 import pygame
 from screens.menu_screen import MenuScreen
-from screens.menus.key_setting_menu_screen import KeySettingMenuScreen
-from screens.menus.sound_setting_menu_screen import SoundSettingMenuScreen
+from screens.menus.key_setting_menu import KeySettingMenuScreen
+from screens.menus.sound_setting_menu import SoundSettingMenuScreen
 from renders.button import Button
 from renders.text_box import TextBox
 from utils.json import save_json, DEFAULT_OPTIONS

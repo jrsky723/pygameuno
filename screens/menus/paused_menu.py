@@ -15,12 +15,12 @@ class PausedMenuScreen(MenuScreen):
         buttons_params = self.rect_params | {"x": "center", "width": 300, "height": 100}
         self.resume_button = Button(y=B_Y, text="RESUME", **buttons_params)
         self.options_button = Button(y=B_Y + B_GAP, text="OPTIONS", **buttons_params)
-        self.quit_button = Button(y=B_Y + B_GAP * 2, text="QUIT", **buttons_params)
+        self.home_button = Button(y=B_Y + B_GAP * 2, text="HOME", **buttons_params)
 
         self.button_sections += [
             [self.resume_button],
             [self.options_button],
-            [self.quit_button],
+            [self.home_button],
         ]
 
     def button_click_up(self, button):
@@ -30,7 +30,7 @@ class PausedMenuScreen(MenuScreen):
                 self.resume()
             elif button == self.options_button:
                 self.open_options()
-            elif button == self.quit_button:
+            elif button == self.home_button:
                 self.open_start_menu()
 
     def resume(self):
@@ -38,14 +38,14 @@ class PausedMenuScreen(MenuScreen):
         self.running = False
 
     def open_options(self):
-        from screens.menus.options_menu_screen import OptionsMenuScreen
+        from screens.menus.options_menu import OptionsMenuScreen
 
         options_menu = OptionsMenuScreen(self.screen, self.clock, self.options)
         new_options = options_menu.run()
         self.__init__(self.screen, self.clock, new_options)
 
     def open_start_menu(self):
-        from screens.menus.start_menu_screen import StartMenuScreen
+        from screens.menus.start_menu import StartMenuScreen
 
         pygame.mixer.music.load(M.MENU_BACKGROUND)
         pygame.mixer.music.play(-1)
