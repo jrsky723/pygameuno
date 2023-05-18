@@ -139,8 +139,7 @@ class UnoGame:
                 card, src="deck", dest=f"player_{player.get_id()}"
             )
         if player.get_is_uno():
-            player.set_is_uno(False)
-            player.set_uno_checked(False)
+            player.reset_uno_states()
 
     def can_play_card(self, card):
         if self.top_color == "black" or card.color == "black":
@@ -165,6 +164,7 @@ class UnoGame:
             self.winner = self.get_current_player()
 
         if player.get_hand_size() == 1:
+            player.set_is_uno(True)
             self.add_com_uno_called_times(player)
 
         return True
@@ -172,13 +172,12 @@ class UnoGame:
     # endregion
 
     def add_com_uno_called_times(self, player):
-        player.set_is_uno(True)
         for p in self.players:
             if p.is_com():
                 if player == p:
                     random_time = random.uniform(0, 2)
                 else:
-                    random_time = random.uniform(1, 3)
+                    random_time = random.uniform(1, 2)
                 self.uno_called_times.append(
                     {"player": p, "time": self.game_time + random_time}
                 )
@@ -188,6 +187,7 @@ class UnoGame:
         self.uno_called_times = []
         is_right_call = False
         for p in self.players:
+            print(p.get_is_uno(), p.get_uno_checked(), p.get_uno_success())
             if p.get_is_uno() and p.get_uno_checked() == False:
                 is_right_call = True
                 p.set_uno_checked(True)
@@ -214,7 +214,6 @@ class UnoGame:
     def check_uno_called(self, player):
         if player.get_is_uno() and not player.get_uno_success():
             self.draw_card(player)
-            self.next_turn()
             return False
         return True
 

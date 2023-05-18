@@ -391,7 +391,6 @@ class GameScreen(Screen):
 
     # region Main Loop
     def main_loop(self):
-        self.create_card_renders()
         super().main_loop()
 
     def run(self):
@@ -434,6 +433,7 @@ class GameScreen(Screen):
             if info["type"] == "card_move":
                 self.add_card_move_animation(info)
         self.game.set_animation_infos([])
+        self.create_card_renders()
 
     def add_card_move_animation(self, info):
         obj = self.find_card_render(info["card"])
@@ -546,6 +546,7 @@ class GameScreen(Screen):
                 f"{current_player.get_name()} didn't call uno!",
                 time=self.message_time,
             )
+            self.end_turn()
         if self.game.get_current_player() == self.my_player:
             self.my_turn()
         else:

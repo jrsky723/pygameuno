@@ -95,6 +95,7 @@ class SingleplayLobbyMenuScreen(MenuScreen):
     def update(self):
         super().update()
         self.computer_numbers_box.set_text(str(self.get_com_number()))
+        self.players[0]["name"] = self.name_input_box.get_text()
 
     def button_click_up(self, button):
         super().button_click_up(button)
@@ -149,6 +150,5 @@ class SingleplayLobbyMenuScreen(MenuScreen):
             self.hovered_button.hover()
 
     def start_game(self):
-       
         game_screen = GameScreen(self.screen, self.clock, self.options, self.players)
         game_screen.run()

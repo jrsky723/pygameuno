@@ -55,3 +55,6 @@ class PausedMenuScreen(MenuScreen):
     def run(self):
         super().run()
         return self.options
+
+    def escape(self):
+        self.resume()

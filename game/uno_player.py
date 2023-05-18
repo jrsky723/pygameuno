@@ -15,6 +15,11 @@ class UnoPlayer:
         self.uno_checked = False
         self.uno_success = False
 
+    def reset_uno_states(self):
+        self.is_uno = False
+        self.uno_checked = False
+        self.uno_success = False
+
     def set_uno_success(self, uno_success):
         self.uno_success = uno_success
 
