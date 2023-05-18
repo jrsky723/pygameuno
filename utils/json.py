@@ -30,10 +30,10 @@ DEFAULT_ACHIEVEMENTS = {
     "single player mode": {
         "wins": 0,
         "story mode": {
-            "LV1 clear": 0,
-            "LV2 clear": 0,
-            "LV3 clear": 0,
-            "LV4 clear": 0,
+            "red": 0,
+            "green": 0,
+            "yellow": 0,
+            "blue": 0,
         },
         "in game": {
             "wins with in 10 turns": 0,

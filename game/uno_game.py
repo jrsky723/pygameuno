@@ -187,7 +187,6 @@ class UnoGame:
         self.uno_called_times = []
         is_right_call = False
         for p in self.players:
-            print(p.get_is_uno(), p.get_uno_checked(), p.get_uno_success())
             if p.get_is_uno() and p.get_uno_checked() == False:
                 is_right_call = True
                 p.set_uno_checked(True)

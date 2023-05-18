@@ -23,6 +23,7 @@ class SCREEN:
 # PATHS
 
 SOUNDS_PATH = os.path.join("assets", "sounds")
+IMAGES_PATH = os.path.join("assets", "images")
 
 
 class SOUND:
@@ -38,6 +39,10 @@ class SOUND:
 class MUSIC:
     MENU_BACKGROUND = os.path.join(SOUNDS_PATH, "sinnesloschen-beam.mp3")
     GAME_BACKGROUND = os.path.join(SOUNDS_PATH, "cool-jazz-loops-2641.mp3")
+
+
+class IMAGE:
+    STORY_MODE = os.path.join(IMAGES_PATH, "story_mode.png")
 
 
 # Colors
@@ -113,3 +118,52 @@ class INPUTBOX:
     BORDER_WIDTH = 0
     HOVERED_BORDER_WIDTH = 2
     SELECTED_BORDER_WIDTH = 4
+
+
+## Story mode constants
+
+STORY_MODE_DESCRIPTION = {
+    "red_zone": [
+        "Match with 1 computer player",
+        "On first distribution, the computer player",
+        "will receive a 50% higher chance of receiving",
+        "a skill card. And a combo that allows a computer",
+        "player to play two or more cards (REVERSE, SKIP)",
+    ],
+    "green_zone": [
+        "Match with 3 computer players.",
+        "Distribute all cards to the same number of ",
+        "players except for the first card.",
+    ],
+    "yellow_zone": [
+        "Match with 2 computer players.",
+        "Randomly changed the color of the card ",
+        "that can be paid every 5 turns.",
+    ],
+    "blue_zone": [
+        "Match with 4 computer players.",
+        "A conversion card with special features has",
+        "been added in this area. A conversion card has",
+        "the ability to select one of the cards that the",
+        "player has and convert it to another.",
+    ],
+}
+
+STORY_MODE_COMS = {
+    "red_zone": [{"name": "RED KING", "is_com": True}],
+    "green_zone": [
+        {"name": "GREEN KING", "is_com": True},
+        {"name": "GREEN QUEEN", "is_com": True},
+        {"name": "GREEN JACK", "is_com": True},
+    ],
+    "yellow_zone": [
+        {"name": "YELLOW KING", "is_com": True},
+        {"name": "YELLOW QUEEN", "is_com": True},
+    ],
+    "blue_zone": [
+        {"name": "BLUE KING", "is_com": True},
+        {"name": "BLUE QUEEN", "is_com": True},
+        {"name": "BLUE JACK", "is_com": True},
+        {"name": "BLUE ACE", "is_com": True},
+    ],
+}

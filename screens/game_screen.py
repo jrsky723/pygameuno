@@ -1,5 +1,9 @@
 import pygame
 from game.uno_game import UnoGame
+from game.story_mode.uno_game_yellow import UnoGameYellow
+from game.story_mode.uno_game_blue import UnoGameBlue
+from game.story_mode.uno_game_green import UnoGameGreen
+from game.story_mode.uno_game_red import UnoGameRed
 from screens.screen import Screen
 from screens.menus.end_menu_ import EndMenuScreen
 from screens.menus.paused_menu import PausedMenuScreen
@@ -16,12 +20,23 @@ import copy, time
 
 
 class GameScreen(Screen):
-    def __init__(self, screen, clock, options, players):
+    def __init__(self, screen, clock, options, game_info):
         super().__init__(screen, clock, options)
         pygame.mixer.music.load(MUSIC.GAME_BACKGROUND)
         pygame.mixer.music.play(-1)
         self.max_players = 6
-        self.game = UnoGame(players)
+        self.game_info = game_info
+        if game_info["mode"] == "story":
+            if game_info["zone"] == "red_zone":
+                self.game = UnoGameRed(game_info["players"])
+            elif game_info["zone"] == "green_zone":
+                self.game = UnoGameGreen(game_info["players"])
+            elif game_info["zone"] == "blue_zone":
+                self.game = UnoGameBlue(game_info["players"])
+            elif game_info["zone"] == "yellow_zone":
+                self.game = UnoGameYellow(game_info["players"])
+        else:
+            self.game = UnoGame(game_info["players"])
         self.my_player = self.game.get_player()
         self.coms = self.game.get_com_players()
         self.surfaces = []

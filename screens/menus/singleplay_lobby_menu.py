@@ -10,13 +10,15 @@ class SingleplayLobbyMenuScreen(MenuScreen):
     def __init__(self, screen, clock, options):
         super().__init__(screen, clock, options)
 
+        self.game_info = {
+            "mode": "single",
+        }
+
         self.my_player = {
-            "id": 0,
             "name": "Player",
             "is_com": False,
         }
         computer1 = {
-            "id": 1,
             "name": "Computer 1",
             "is_com": True,
         }
@@ -130,7 +132,6 @@ class SingleplayLobbyMenuScreen(MenuScreen):
         if len(self.players) < 6:
             self.players.append(
                 {
-                    "id": len(self.players),
                     "name": f"Computer {len(self.players)}",
                     "is_com": True,
                 }
@@ -150,5 +151,6 @@ class SingleplayLobbyMenuScreen(MenuScreen):
             self.hovered_button.hover()
 
     def start_game(self):
-        game_screen = GameScreen(self.screen, self.clock, self.options, self.players)
+        self.game_info["players"] = self.players
+        game_screen = GameScreen(self.screen, self.clock, self.options, self.game_info)
         game_screen.run()
