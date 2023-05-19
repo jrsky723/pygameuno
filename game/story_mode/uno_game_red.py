@@ -26,10 +26,9 @@ class UnoGameRed(UnoGame):
     def _deal_cards(self, num_cards=7):
         for _ in range(num_cards):
             for player in self.com_players:
-                weight = random.randint(0, 2)
-                if weight == 0:
+                weight = random.randint(0, 4)
+                if weight < 2:
                     card = self.number_cards.pop(0)
-
                 else:
                     card = self.action_cards.pop(0)
                 self.add_card_move_animation(

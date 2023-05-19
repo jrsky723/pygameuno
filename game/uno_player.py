@@ -13,18 +13,18 @@ class UnoPlayer:
         self.next_card_pos = (0, 0)
         self.is_uno = False
         self.uno_checked = False
-        self.uno_success = False
+        self.uno_failed = False
 
     def reset_uno_states(self):
         self.is_uno = False
         self.uno_checked = False
-        self.uno_success = False
+        self.uno_failed = False
 
-    def set_uno_success(self, uno_success):
-        self.uno_success = uno_success
+    def set_uno_failed(self, uno_failed):
+        self.uno_failed = uno_failed
 
-    def get_uno_success(self):
-        return self.uno_success
+    def get_uno_failed(self):
+        return self.uno_failed
 
     def get_is_uno(self):
         return self.is_uno

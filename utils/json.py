@@ -21,7 +21,7 @@ DEFAULT_OPTIONS = {
         "return": "return",
         "draw": "d",
         "escape": "escape",
-        "uno": "u",
+        "uno": "space",
     },
 }
 

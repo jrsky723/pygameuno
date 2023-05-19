@@ -405,7 +405,6 @@ class GameScreen(Screen):
 
     def update(self):
         super().update()
-        self.game.set_game_time(time.time())
         self.update_animations_finished()
         for card_render in self.card_renders:
             card_render.update()
@@ -418,15 +417,16 @@ class GameScreen(Screen):
     # Events
     def process_events(self):
         super().process_events()
-        self.game.process_turn()
+        self.game.process_game()
         self.add_game_animations()
+        if self.message_timer.is_finished():
+            self.hide_message()
         if self.animations:
             self.game.set_animation_finished(False)
+            return
         else:
             self.game.set_animation_finished(True)
         self.process_game_events()
-        if self.message_timer.is_finished():
-            self.hide_message()
 
     # region Animations
     def add_game_animations(self):
@@ -514,12 +514,6 @@ class GameScreen(Screen):
                     time=self.message_time,
                 )
         self.game.set_game_event_infos([])
-
-        game_time = self.game.get_game_time()
-        for uno_called_time in self.game.get_uno_called_times():
-            if uno_called_time["time"] < game_time:
-                self.game.uno_called(uno_called_time["player"])
-                break
 
     def show_message(self, message, time=1):
         self.message_timer.set_timer(time)
