@@ -14,9 +14,11 @@ from renders.rect import Rect
 from utils.timer import Timer
 from utils.color_conversion import rgb
 from animations.move_animation import MoveAnimation
+from animations.skip_animation import SkipAnimation
+from utils.draw_functions import draw_inner_border
 from utils.constants import SCREEN as S, SIZE_RATIO as SR, SOUND, MUSIC
 from game.uno_constants import COLORS
-import copy, time
+import copy
 
 
 class GameScreen(Screen):
@@ -26,6 +28,7 @@ class GameScreen(Screen):
         pygame.mixer.music.play(-1)
         self.max_players = 6
         self.game_info = game_info
+        self.my_player_idx = 0
         if game_info["mode"] == "story":
             if game_info["zone"] == "red_zone":
                 self.game = UnoGameRed(game_info["players"])
@@ -37,7 +40,7 @@ class GameScreen(Screen):
                 self.game = UnoGameYellow(game_info["players"])
         else:
             self.game = UnoGame(game_info["players"])
-        self.my_player = self.game.get_player()
+        self.my_player = self.game.get_player(self.my_player_idx)
         self.coms = self.game.get_com_players()
         self.surfaces = []
         self.my_hand_surface = None
@@ -253,9 +256,9 @@ class GameScreen(Screen):
 
     def create_message_box(self):
         self.message_box = TextBox(
-            x=350,
+            x=500,
             y=80,
-            font_size=30,
+            font_size=25,
             text="",
             **self.rect_params,
         )
@@ -334,6 +337,8 @@ class GameScreen(Screen):
         self.uno_button.draw(self.board_surface)
         self.deck_render.draw(self.board_surface)
         self.message_box.draw(self.board_surface)
+        self.draw_function_keys_manual(self.board_surface)
+        self.draw_direction(self.board_surface)
         if self.color_picker_on:
             self.draw_color_picker(self.board_surface)
 
@@ -354,6 +359,32 @@ class GameScreen(Screen):
         )
         rect_render.draw(surface)
 
+    def draw_function_keys_manual(self, surface):
+        T_X, T_Y, T_GAP = 30, 30, 30
+        text_params = {"font_size": 20} | self.rect_params
+        for i, key in enumerate(["draw", "pause", "uno"]):
+            key_binding = (
+                self.key_bindings["escape"]
+                if key == "pause"
+                else self.key_bindings[key]
+            )
+            key_text = TextBox(
+                text=f"{key.upper()} : {key_binding}",
+                x=T_X,
+                y=T_Y + i * T_GAP,
+                **text_params,
+            )
+            key_text.draw(surface)
+
+    def draw_direction(self, surface):
+        text_params = {"font_size": 130, "font_name": "Arial"} | self.rect_params
+        if self.game.get_direction() == 1:
+            text_params = text_params | {"text_color": "green", "text": "↓"}
+        else:
+            text_params = text_params | {"text_color": "red", "text": "↑"}
+        direction_text = TextBox(x=850, y=50, **text_params)
+        direction_text.draw(surface)
+
     def draw_surfaces(self):
         # blit surfaces
         self.screen.blit(self.my_hand_surface, self.my_hand_surface_const["pos"])
@@ -369,15 +400,7 @@ class GameScreen(Screen):
         # fill surfaces & add inner border
         for surface in self.surfaces:
             surface.fill(self.background_color)
-            self.add_inner_border(surface, rgb("white"), 3)
-
-    def add_inner_border(self, surface, color, width):
-        pygame.draw.rect(
-            surface,
-            color,
-            (0, 0, surface.get_width(), surface.get_height()),
-            width,
-        )
+            draw_inner_border(surface, rgb("white"), 3)
 
     def draw_card_renders(self):
         for card_render in self.card_renders:
@@ -433,8 +456,23 @@ class GameScreen(Screen):
         for info in self.game.get_animation_infos():
             if info["type"] == "card_move":
                 self.add_card_move_animation(info)
+            elif info["type"] == "skip":
+                self.add_skip_animation(info)
         self.game.set_animation_infos([])
         self.create_card_renders()
+
+    def add_skip_animation(self, info):
+        idx = info["player_idx"]
+        if idx == self.my_player_idx:
+            surface = self.my_hand_surface
+        else:
+            surface = self.com_hand_surfaces[idx - 1]
+        self.animations.append(
+            SkipAnimation(
+                surface=surface,
+                duration=info["duration"],
+            )
+        )
 
     def add_card_move_animation(self, info):
         obj = self.find_card_render(info["card"])
@@ -490,7 +528,9 @@ class GameScreen(Screen):
             if animation.is_delay_finished() and not animation.get_sound_played():
                 self.play_animation_sound(animation)
             if animation.is_finished():
-                self.game.update_by_animtaion_info(animation.move_info)
+                if animation.__class__.__name__ == "MoveAnimation":
+                    if animation.move_info["type"] == "card_move":
+                        self.game.update_by_animtaion_info(animation.move_info)
             else:
                 animations.append(animation)
         self.animations = animations
@@ -501,18 +541,19 @@ class GameScreen(Screen):
         for event_info in self.game.get_game_event_infos():
             if event_info["type"] == "player_win":
                 self.game_over()
-            if event_info["type"] == "color_change_request":
+            elif event_info["type"] == "color_change_request":
                 self.color_picker_on = True
-            if event_info["type"] == "uno_called":
+            elif event_info["type"] == "uno_called":
                 self.show_message(
                     f"{event_info['value'].get_name()} called uno!",
                     time=self.message_time,
                 )
-            if event_info["type"] == "uno_failed":
+            elif event_info["type"] == "uno_failed":
                 self.show_message(
                     f"{event_info['value'].get_name()} failed to call uno!",
                     time=self.message_time,
                 )
+
         self.game.set_game_event_infos([])
 
     def show_message(self, message, time=1):

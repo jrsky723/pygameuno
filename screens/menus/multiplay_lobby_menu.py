@@ -4,6 +4,7 @@ from renders.button import Button
 from renders.text_box import TextBox
 from renders.input_box import InputBox
 from utils.color_conversion import rgb
+from utils.draw_functions import draw_x, draw_inner_border
 
 
 # players_sample = [
@@ -204,15 +205,7 @@ class MultiplayLobbyMenuScreen(MenuScreen):
         # fill surfaces & add inner border
         for surface in self.surfaces:
             surface.fill(self.background_color)
-            self.add_inner_border(surface, rgb("white"), 3)
-
-    def add_inner_border(self, surface, color, width):
-        pygame.draw.rect(
-            surface,
-            color,
-            (0, 0, surface.get_width(), surface.get_height()),
-            width,
-        )
+            draw_inner_border(surface, rgb("white"), 3)
 
     def draw_player(self, surface, player, is_me):
         s_width, s_height = surface.get_width(), surface.get_height()
@@ -236,16 +229,13 @@ class MultiplayLobbyMenuScreen(MenuScreen):
                 self.other_info_surfaces[i], self.other_players[i], is_me=False
             )
 
-    def draw_blank(self, surface):
-        # draw X in the middle of the surface
-        s_width, s_height = surface.get_width(), surface.get_height()
-        pygame.draw.line(surface, rgb("white"), (0, 0), (s_width, s_height), 3)
-        pygame.draw.line(surface, rgb("white"), (0, s_height), (s_width, 0), 3)
-
     def draw_blanks(self):
         for i in range(self.max_players - len(self.players) - self.opend_slots):
-            self.draw_blank(
-                self.other_info_surfaces[self.opend_slots + i + len(self.other_players)]
+            draw_x(
+                self.other_info_surfaces[
+                    self.opend_slots + i + len(self.other_players)
+                ],
+                rgb("white"),
             )
 
     def draw(self):

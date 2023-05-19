@@ -103,6 +103,7 @@ class BUTTON:
 
 
 class TEXTBOX:
+    FONT = "Commodore-64-v6.3"
     FONT_SIZE = 60
     TEXT_COLOR = "white"
     BORDER_COLOR = "white"

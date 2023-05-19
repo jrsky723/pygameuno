@@ -26,9 +26,9 @@ class Card(TextBox):
         super().__init__(
             x,
             y,
-            card.get_abb(),
             screen_size,
             color_blind,
+            card.get_abb(),
             True,  # resize
             True,  # reposition
             width,

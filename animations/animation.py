@@ -20,7 +20,8 @@ class Animation:  # duration is in seconds
             self.progress = 1
         if self.progress < 0:
             self.progress = 0
-        self.obj.update()
+        if self.obj is not None:
+            self.obj.update()
 
     def is_finished(self):
         return self.progress == 1

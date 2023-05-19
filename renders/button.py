@@ -28,9 +28,9 @@ class Button(TextBox):
         super().__init__(
             x,
             y,
-            text,
             screen_size,
             color_blind,
+            text,
             reposition,
             resize,
             width,

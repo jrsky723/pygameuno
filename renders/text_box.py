@@ -9,9 +9,9 @@ class TextBox(Rect):
         self,
         x,
         y,
-        text,
         screen_size,
         color_blind,
+        text="",
         reposition=True,
         resize=True,
         width=0,
@@ -21,9 +21,13 @@ class TextBox(Rect):
         background_color=None,
         border_color=T.BORDER_COLOR,
         border_width=0,
+        font_name=T.FONT,
     ):
+        self.font_name = font_name
         self.text_color = rgb(text_color, color_blind)
-        temp_text_surface = get_text_surface(text, font_size, self.text_color)
+        temp_text_surface = get_text_surface(
+            text, font_size, self.text_color, self.font_name
+        )
         width = max(width, temp_text_surface.get_width())
         height = max(height, temp_text_surface.get_height())
         super().__init__(
@@ -41,7 +45,9 @@ class TextBox(Rect):
         )
         self.text = text
         self.font_size = font_size * SIZE_RATIO[screen_size] if resize else font_size
-        self.text_surface = get_text_surface(self.text, self.font_size, self.text_color)
+        self.text_surface = get_text_surface(
+            self.text, self.font_size, self.text_color, self.font_name
+        )
         self.visible = True
 
     def draw(self, screen):
@@ -60,7 +66,9 @@ class TextBox(Rect):
 
     def update(self):
         super().update()
-        self.text_surface = get_text_surface(self.text, self.font_size, self.text_color)
+        self.text_surface = get_text_surface(
+            self.text, self.font_size, self.text_color, self.font_name
+        )
 
     def set_text(self, text):
         self.text = text

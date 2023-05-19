@@ -68,7 +68,7 @@ class UnoGame:
         self.deck = cards
         # TODO: remove this
         # for i in range(10000):
-        #     cards.append(UnoCard(type="action", color="black", value="bonus"))
+        #     cards.append(UnoCard(type="action", color="black", value="skip"))
 
     def _shuffle_deck(self):
         random.shuffle(self.deck)
@@ -149,6 +149,9 @@ class UnoGame:
         if not self.can_play_card(card):
             return False
         player.play_card(card)
+        if player.get_hand_size() == 1:
+            player.set_is_uno(True)
+            self.add_com_uno_called_times(player)
         self.add_card_move_animation(
             card, src=f"player_{player.get_id()}", dest="discard"
         )
@@ -163,9 +166,9 @@ class UnoGame:
         for p in self.players:
             if p.is_com():
                 if player == p:
-                    random_time = random.gauss(0, 2)
+                    random_time = random.gauss(0.1, 1.5)
                 else:
-                    random_time = random.uniform(1, 2)
+                    random_time = random.gauss(0.1, 2)
                 self.uno_called_times.append(
                     {"player": p, "time": self.game_time + random_time}
                 )
@@ -266,9 +269,7 @@ class UnoGame:
             self.game_over = True
             self.winner = self.get_current_player()
             return
-        elif player.get_hand_size() == 1:
-            player.set_is_uno(True)
-            self.add_com_uno_called_times(player)
+
         self.turn_count += 1
         self._start_turn(self.get_next_player())
         self.current_player_idx = self.next_player_idx
@@ -288,6 +289,7 @@ class UnoGame:
             self.next_player_idx %= self.player_number
 
         elif card.value == "skip":
+            self.add_skip_animation(self.get_next_player())
             self.next_turn()
         elif card.value == "draw2":
             self.draw_card(self.get_next_player(), 2)
@@ -329,7 +331,17 @@ class UnoGame:
     # endregion
 
     # # region Animation Functions
-    def add_card_move_animation(self, card, src, dest, delay=0.1, duration=0.3):
+    def add_skip_animation(self, player, duration=1):
+        player_idx = self.players.index(player)
+        self.animation_infos.append(
+            {
+                "type": "skip",
+                "player_idx": player_idx,
+                "duration": duration,
+            }
+        )
+
+    def add_card_move_animation(self, card, src, dest, delay=0.1, duration=0.5):
         self.animation_infos.append(
             {
                 "type": "card_move",
@@ -379,8 +391,8 @@ class UnoGame:
     def get_com_players(self):
         return self.com_players
 
-    def get_player(self):
-        return self.players[0]
+    def get_player(self, idx):
+        return self.players[idx]
 
     def get_current_player(self):
         return self.players[self.current_player_idx]
