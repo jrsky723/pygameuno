@@ -11,6 +11,7 @@ class UnoCard:
         self.type = type
         self.color = color
         self.value = value
+        self.initial_weight = 0
 
     def __str__(self):
         return f"{self.color} {self.value}"

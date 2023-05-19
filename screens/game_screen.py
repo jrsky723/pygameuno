@@ -148,7 +148,7 @@ class GameScreen(Screen):
             "width": C_WIDTH,
             "height": C_HEIGHT,
             "y": C_Y,
-            "face_up": is_me,
+            "face_up": True,
             "font_size": FONT_SIZE,
         } | self.rect_params
 

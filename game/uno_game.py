@@ -16,6 +16,7 @@ class UnoGame:
         self.player_number = len(players_info)
         self.players = []
         self.com_players = []
+        self.human_players = []
         self.discard_pile = []
         self.current_player_idx = 0
         self.direction = 1
@@ -45,7 +46,7 @@ class UnoGame:
         return self.game_time
 
     def _init_game(self):
-        self.deck = self._create_deck()
+        self._create_deck()
         UnoPlayer.init()
         self._add_players(self.players_info)
 
@@ -64,14 +65,14 @@ class UnoGame:
             # Add color action cards
             for value in COLOR_ACTION_VALUES * 2:
                 cards.append(UnoCard(type="action", color=color, value=value))
-        # Add wild cards
-        for value in WILD_ACTION_VALUES:
-            cards.append(UnoCard(type="action", color="black", value=value))
+            # Add wild cards
+            for value in WILD_ACTION_VALUES:
+                cards.append(UnoCard(type="action", color="black", value=value))
 
+        self.deck = cards
         # TODO: remove this
         # for i in range(10000):
         #     cards.append(UnoCard(type="action", color="black", value="color_change"))
-        return cards
 
     def _shuffle_deck(self):
         random.shuffle(self.deck)
@@ -81,7 +82,7 @@ class UnoGame:
         for i in range(num_cards):
             for player in self.players:
                 self.add_card_move_animation(
-                    self.deck.pop(0),
+                    card=self.deck.pop(0),
                     src="deck",
                     dest=f"player_{player.get_id()}",
                     delay=0.1,
@@ -99,6 +100,8 @@ class UnoGame:
         for player in self.players:
             if player.is_com():
                 self.com_players.append(player)
+            else:
+                self.human_players.append(player)
 
     def _set_top_discard_card(self):
         self.add_card_move_animation(self.deck.pop(0), src="deck", dest="discard")
