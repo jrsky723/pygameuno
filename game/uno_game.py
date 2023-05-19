@@ -2,8 +2,9 @@ import random
 from game.uno_card import UnoCard
 from game.uno_player import UnoPlayer
 from game.uno_com_player import UnoComPlayer
-import time
 from game.uno_constants import COLORS, NUMBERS, COLOR_ACTION_VALUES, WILD_ACTION_VALUES
+from utils.timer import Timer
+import time
 
 
 # TODO: change com player hand to we can see the actual cards
@@ -19,6 +20,7 @@ class UnoGame:
         self.human_players = []
         self.discard_pile = []
         self.current_player_idx = 0
+        self.next_player_idx = 1
         self.direction = 1
         self.game_over = False
         self.moving_card_nums = 0
@@ -30,8 +32,15 @@ class UnoGame:
         self.game_event_infos = []
         self.first_uno_called_player = None
         self.uno_called_times = []
+        self.turn_count = 0
         self.game_time = time.time()
+        self.turn_timer = Timer()
+        self.turn_ended = False
+        self.human_turn_time, self.com_turn_time = 20, 2
+        self.animation_finished = False
+
         self._init_game()
+        self._start_game()
 
     def get_uno_called_times(self):
         return self.uno_called_times
@@ -201,17 +210,15 @@ class UnoGame:
 
     # region Game Functions
 
-    def start_game(self):
-        self.players[self.current_player_idx].set_is_turn(True)
+    def _start_game(self):
+        self._start_turn(self.players[self.current_player_idx])
         self._shuffle_deck()
         self._deal_cards()
         self._set_top_discard_card()
 
     def next_turn(self):
-        self.get_current_player().set_is_turn(False)
-        self.get_next_player().set_is_turn(True)
-        self.current_player_idx += self.direction + self.player_number
-        self.current_player_idx %= self.player_number
+        self.next_player_idx += self.direction + self.player_number
+        self.next_player_idx %= self.player_number
 
     def check_uno_called(self, player):
         if player.get_is_uno() and not player.get_uno_success():
@@ -220,10 +227,31 @@ class UnoGame:
         return True
 
     def prev_turn(self):
-        self.get_current_player().set_is_turn(False)
-        self.get_prev_player().set_is_turn(True)
-        self.current_player_idx -= self.direction + self.player_number
-        self.current_player_idx %= self.player_number
+        self.next_player_idx -= self.direction + self.player_number
+        self.next_player_idx %= self.player_number
+
+    def _start_turn(self, player):
+        self.turn_timer.reset()
+        player.set_is_turn(True)
+        if player.is_com():
+            self.turn_timer.set_timer(self.com_turn_time)
+        else:
+            self.turn_timer.set_timer(self.human_turn_time)
+        self.turn_timer.start()
+        if not self.check_uno_called(player):
+            self.add_game_event_info("uno_failed", player)
+            self.end_turn(player)
+
+    def process_turn(self):
+        if self.turn_timer.is_finished():
+            self.turn_time_out(self.get_current_player())
+        if self.animation_finished:
+            self.turn_timer.resume()
+        else:
+            self.turn_timer.pause()
+            return
+        if self.turn_ended:
+            self.end_turn(self.get_current_player())
 
     # automatically play card, if player can't play, draw card
     def auto_turn(self, com_player):
@@ -233,12 +261,20 @@ class UnoGame:
         card = com_player.auto_card(self.top_color, self.top_value)
         self.play_card(com_player, card)
 
-    def turn_time_out(self):
-        player = self.get_current_player()
+    def turn_time_out(self, player):
         if player.is_com():
             self.auto_turn(player)
         else:
             self.draw_card(player)
+        self.turn_ended = True
+
+    def end_turn(self, player):
+        self.turn_ended = False
+        player.set_is_turn(False)
+        self.turn_count += 1
+        self._start_turn(self.get_next_player())
+        self.current_player_idx = self.next_player_idx
+        self.next_turn()
 
     # def uno(self, player):
 
@@ -249,6 +285,10 @@ class UnoGame:
     def _handle_action(self, player, card):
         if card.value == "reverse":
             self.direction *= -1
+            # change next player index
+            self.next_player_idx += 2 * self.direction + self.player_number
+            self.next_player_idx %= self.player_number
+
         elif card.value == "skip":
             self.next_turn()
         elif card.value == "draw2":
@@ -303,6 +343,8 @@ class UnoGame:
             }
         )
         self.moving_card_nums += 1
+        if self.animation_finished:
+            self.animation_finished = False
 
     def add_game_event_info(self, type, value):
         self.game_event_infos.append({"type": type, "value": value})
@@ -346,14 +388,10 @@ class UnoGame:
         return self.players[self.current_player_idx]
 
     def get_next_player(self):
-        return self.players[
-            (self.current_player_idx + self.direction) % self.player_number
-        ]
+        return self.players[self.next_player_idx]
 
-    def get_prev_player(self):
-        return self.players[
-            (self.current_player_idx - self.direction) % self.player_number
-        ]
+    def get_remaining_turn_time(self):
+        return self.turn_timer.get_remaining_time()
 
     def get_deck(self):
         return self.deck
@@ -367,10 +405,16 @@ class UnoGame:
     def get_winner(self):
         return self.winner
 
+    def set_turn_ended(self, ended):
+        self.turn_ended = ended
+
     # endregion
 
     # region set functions
     def set_top_color(self, color):
         self.top_color = color
+
+    def set_animation_finished(self, finished):
+        self.animation_finished = finished
 
     # endregion

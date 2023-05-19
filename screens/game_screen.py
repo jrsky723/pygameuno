@@ -73,11 +73,6 @@ class GameScreen(Screen):
         #  hover, click
         self.my_hand_card_renders = []
 
-        # handling turns
-        self.turn_started = False
-        self.turn_timer = Timer()
-        self.my_turn_time, self.com_turn_time = 20, 2
-
         # handling game event
         # TODO: show direction in screen
         self.direction = self.game.get_direction()
@@ -327,7 +322,7 @@ class GameScreen(Screen):
     def draw_turn_timer(self, surface, text_params):
         S_WIDTH, S_HEIGHT = surface.get_width(), surface.get_height()
         timer_text = TextBox(
-            text=f"{1+int(self.turn_timer.get_remaining_time())}",
+            text=f"{1+int(self.game.get_remaining_turn_time())}",
             x=S_WIDTH * 0.8,
             y=S_HEIGHT * 0.4,
             **text_params,
@@ -408,13 +403,6 @@ class GameScreen(Screen):
     def main_loop(self):
         super().main_loop()
 
-    def run(self):
-        try:
-            self.start_game()
-        except Exception as e:
-            print(e)
-        super().run()
-
     def update(self):
         super().update()
         self.game.set_game_time(time.time())
@@ -430,14 +418,12 @@ class GameScreen(Screen):
     # Events
     def process_events(self):
         super().process_events()
-        if self.turn_timer.is_finished():
-            self.game.turn_time_out()
-            self.end_turn()
+        self.game.process_turn()
         self.add_game_animations()
         if self.animations:
-            self.turn_timer.pause()
-            return
-        self.turn_timer.resume()
+            self.game.set_animation_finished(False)
+        else:
+            self.game.set_animation_finished(True)
         self.process_game_events()
         if self.message_timer.is_finished():
             self.hide_message()
@@ -522,6 +508,11 @@ class GameScreen(Screen):
                     f"{event_info['value'].get_name()} called uno!",
                     time=self.message_time,
                 )
+            if event_info["type"] == "uno_failed":
+                self.show_message(
+                    f"{event_info['value'].get_name()} failed to call uno!",
+                    time=self.message_time,
+                )
         self.game.set_game_event_infos([])
 
         game_time = self.game.get_game_time()
@@ -541,31 +532,9 @@ class GameScreen(Screen):
         self.message_timer.reset()
 
     # region game events
-    def start_game(self):
-        self.game.start_game()
-        self.my_turn()
-
-    def my_turn(self):
-        self.turn_timer.set_timer(self.my_turn_time)
-        self.turn_timer.start()
-
-    def com_turn(self):
-        self.turn_timer.set_timer(self.com_turn_time)
-        self.turn_timer.start()
 
     def end_turn(self):
-        self.game.next_turn()
-        current_player = self.game.get_current_player()
-        if not self.game.check_uno_called(current_player):
-            self.show_message(
-                f"{current_player.get_name()} didn't call uno!",
-                time=self.message_time,
-            )
-            self.end_turn()
-        if self.game.get_current_player() == self.my_player:
-            self.my_turn()
-        else:
-            self.com_turn()
+        self.game.set_turn_ended(True)
 
     def game_over(self):
         self.running = False
