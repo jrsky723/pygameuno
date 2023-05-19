@@ -240,7 +240,7 @@ class UnoGame:
         self.turn_timer.start()
         if not self.check_uno_called(player):
             self.add_game_event_info("uno_failed", player)
-            self.end_turn(player)
+            self._end_turn(player)
 
     def process_turn(self):
         if self.turn_timer.is_finished():
@@ -251,7 +251,7 @@ class UnoGame:
             self.turn_timer.pause()
             return
         if self.turn_ended:
-            self.end_turn(self.get_current_player())
+            self._end_turn(self.get_current_player())
 
     # automatically play card, if player can't play, draw card
     def auto_turn(self, com_player):
@@ -268,7 +268,7 @@ class UnoGame:
             self.draw_card(player)
         self.turn_ended = True
 
-    def end_turn(self, player):
+    def _end_turn(self, player):
         self.turn_ended = False
         player.set_is_turn(False)
         self.turn_count += 1

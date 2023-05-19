@@ -141,11 +141,10 @@ STORY_MODE_DESCRIPTION = {
         "that can be paid every 5 turns.",
     ],
     "blue_zone": [
-        "Match with 4 computer players.",
-        "A conversion card with special features has",
-        "been added in this area. A conversion card has",
-        "the ability to select one of the cards that the",
-        "player has and convert it to another.",
+        "In this area, at the end of each player's turn,",
+        "the reload probability increases by a certain level.",
+        "When a reload occurs, the player reloads all of his",
+        "cards at the start of the turn.",
     ],
 }
 
