@@ -28,7 +28,7 @@ DEFAULT_OPTIONS = {
 
 DEFAULT_ACHIEVEMENTS = {
     "single player mode": {
-        "wins": 0,
+        "single mode": 0,
         "story mode": {
             "red": 0,
             "green": 0,
@@ -36,11 +36,14 @@ DEFAULT_ACHIEVEMENTS = {
             "blue": 0,
         },
         "in game": {
-            "wins with in 10 turns": 0,
-            "wins with no function card": 0,
-            "wins with no actiion card": 0,
+            "over 10 draws": 0,
+            "over 10 unos": 0,
+            "in 10 turns": 0,
+            "no action card": 0, 
+            "after other uno": 0,
+            "over 15 cards": 0,
         },
-    }
+    },
 }
 
 DEFAULT_JSON = {

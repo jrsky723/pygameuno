@@ -41,6 +41,7 @@ class GameScreen(Screen):
         else:
             self.game = UnoGame(game_info["players"])
         self.my_player = self.game.get_player(self.my_player_idx)
+        self.my_player.create_achievements()
         self.coms = self.game.get_com_players()
         self.surfaces = []
         self.my_hand_surface = None
@@ -574,7 +575,11 @@ class GameScreen(Screen):
     def game_over(self):
         self.running = False
         end_menu_screen = EndMenuScreen(
-            self.screen, self.clock, self.options, self.game.get_winner()
+            self.screen,
+            self.clock,
+            self.options,
+            self.game.get_winner(),
+            self.game_info,
         )
         end_menu_screen.run()
 

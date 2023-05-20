@@ -137,6 +137,9 @@ class UnoGame:
             self.add_card_move_animation(
                 card, src="deck", dest=f"player_{player.get_id()}"
             )
+            self.update_achievements(player, "draw")
+        if player.get_hand_size() >= 15:
+            self.update_achievements(player, "over 15 cards")
 
     def can_play_card(self, card):
         if self.top_color == "black" or card.color == "black":
@@ -156,6 +159,7 @@ class UnoGame:
             card, src=f"player_{player.get_id()}", dest="discard"
         )
         if card.type == "action":
+            self.update_achievements(player, "no action card")
             self._handle_action(player, card)
 
         return True
@@ -166,9 +170,9 @@ class UnoGame:
         for p in self.players:
             if p.is_com():
                 if player == p:
-                    random_time = random.gauss(0.1, 1.5)
+                    random_time = random.uniform(0.5, 2)
                 else:
-                    random_time = random.gauss(0.1, 2)
+                    random_time = random.uniform(1, 3)
                 self.uno_called_times.append(
                     {"player": p, "time": self.game_time + random_time}
                 )
@@ -186,6 +190,7 @@ class UnoGame:
 
         if is_right_call:
             self.add_game_event_info("uno_called", player)
+            self.update_achievements(player, "uno")
         return is_right_call
 
     # region Game Functions
@@ -212,6 +217,7 @@ class UnoGame:
 
     def _start_turn(self, player):
         self.turn_timer.reset()
+        player.turn_count += 1
         player.set_is_turn(True)
         if player.is_com():
             self.turn_timer.set_timer(self.com_turn_time)
@@ -268,6 +274,15 @@ class UnoGame:
             self.add_game_event_info("player_win", player)
             self.game_over = True
             self.winner = self.get_current_player()
+            if self.winner.turn_count <= 10:
+                self.update_achievements(self.winner, "10 turns")
+            somebody_uno = False
+            for p in self.players:
+                if p.uno_failed is False:
+                    somebody_uno = True
+                    break
+            if somebody_uno:
+                self.update_achievements(self.winner, "after other uno")
             return
 
         self.turn_count += 1
@@ -428,3 +443,19 @@ class UnoGame:
         self.animation_finished = finished
 
     # endregion
+
+    def update_achievements(self, player, achievement):
+        if player.in_game_achievements is None:
+            return
+        if achievement == "10 turns":
+            player.in_game_achievements["10 turns"] = False
+        elif achievement == "uno":
+            player.in_game_achievements["uno"] += 1
+        elif achievement == "draw":
+            player.in_game_achievements["draw"] += 1
+        elif achievement == "no action card":
+            player.in_game_achievements["no action card"] = False
+        elif achievement == "after other uno":
+            player.in_game_achievements["after other uno"] = True
+        elif achievement == "over 15 cards":
+            player.in_game_achievements["over 15 cards"] = True

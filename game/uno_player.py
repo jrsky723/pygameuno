@@ -14,11 +14,23 @@ class UnoPlayer:
         self.is_uno = False
         self.uno_checked = False
         self.uno_failed = False
+        self.in_game_achievements = None
+        self.turn_count = 0
 
     def reset_uno_states(self):
         self.is_uno = False
         self.uno_checked = False
         self.uno_failed = False
+
+    def create_achievements(self):
+        self.in_game_achievements = {
+            "uno": 0,
+            "draw": 0,
+            "10 turns": True,
+            "no action card": True,
+            "after other uno": False,
+            "over 15 cards": False,
+        }
 
     def set_uno_failed(self, uno_failed):
         self.uno_failed = uno_failed
