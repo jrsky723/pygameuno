@@ -43,6 +43,7 @@ class MUSIC:
 
 class IMAGE:
     STORY_MODE = os.path.join(IMAGES_PATH, "story_mode.png")
+    CROWN = os.path.join(IMAGES_PATH, "crown.png")
 
 
 # Colors

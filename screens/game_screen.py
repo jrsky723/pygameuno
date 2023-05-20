@@ -16,7 +16,7 @@ from utils.color_conversion import rgb
 from animations.move_animation import MoveAnimation
 from animations.skip_animation import SkipAnimation
 from utils.draw_functions import draw_inner_border
-from utils.constants import SCREEN as S, SIZE_RATIO as SR, SOUND, MUSIC
+from utils.constants import SCREEN as S, SIZE_RATIO as SR, SOUND, MUSIC, IMAGE
 from game.uno_constants import COLORS
 import copy
 
@@ -64,6 +64,30 @@ class GameScreen(Screen):
         self.message_timer = Timer()
         self.message_time = 2
 
+        # Achievement alert box
+        self.alert_timer = Timer()
+        self.alert_time = 2
+        self.alert_box = pygame.surface.Surface(
+            (self.screen_width / 5, self.screen_height / 5)
+        )
+        self.alert_box.fill(rgb("black"))
+        self.alert_box.set_alpha(0)
+
+        self.alert_box_pos = (0, self.screen_height / 5 * 2.5)
+        self.achievement_icon = pygame.image.load(IMAGE.CROWN)
+
+        self.achievement_icon = pygame.transform.scale(
+            self.achievement_icon,
+            (self.screen_width / 12.8 / 1.5, self.screen_height / 7.2 / 1.5),
+        )
+        self.achievement_text = TextBox(
+            x=20,
+            y=80,
+            font_size=20,
+            text="",
+            **self.rect_params,
+        )
+
         # color_picker
         self.color_picker_on = False
         self.color_picker_buttons = []
@@ -82,6 +106,7 @@ class GameScreen(Screen):
         self.direction = self.game.get_direction()
         self.animations = []
 
+        self.played = False
         # sound
         self.sounds = {
             "card_move": pygame.mixer.Sound(SOUND.CARD_MOVE),
@@ -89,11 +114,11 @@ class GameScreen(Screen):
             "error": pygame.mixer.Sound(SOUND.ERROR),
             "uno": pygame.mixer.Sound(SOUND.UNO),
         }
+
         self.update_options()
         # card_selection
         self.hovered_card_render = None
         self.hovered_card_render_idx = None
-
         # create
         self.create_surfaces()
         self.create_board()
@@ -413,6 +438,12 @@ class GameScreen(Screen):
         for animation in self.animations:
             animation.draw(self.screen)
 
+    def draw_alert_box(self):
+        self.alert_box.fill(rgb("black"))
+        self.alert_box.blit(self.achievement_icon, (0, 0))
+        self.achievement_text.draw(self.alert_box)
+        self.screen.blit(self.alert_box, self.alert_box_pos)
+
     def draw(self):
         super().draw()
         self.draw_surfaces()
@@ -420,6 +451,7 @@ class GameScreen(Screen):
         self.draw_players()
         self.draw_card_renders()
         self.draw_animations()
+        self.draw_alert_box()
 
     # endregion
 
@@ -443,6 +475,8 @@ class GameScreen(Screen):
         super().process_events()
         self.game.process_game()
         self.add_game_animations()
+        if self.alert_timer.is_finished():
+            self.hide_alert_box()
         if self.message_timer.is_finished():
             self.hide_message()
         if self.animations:
@@ -554,8 +588,26 @@ class GameScreen(Screen):
                     f"{event_info['value'].get_name()} failed to call uno!",
                     time=self.message_time,
                 )
+            elif event_info["type"] == "achievement":
+                self.show_achievement(event_info["value"])
 
         self.game.set_game_event_infos([])
+
+    def show_achievement(self, achievement):
+        self.achievement_text = TextBox(
+            x=20,
+            y=80,
+            font_size=20,
+            text=achievement,
+            **self.rect_params,
+        )
+        self.alert_box.set_alpha(200)
+        self.alert_timer.set_timer(self.alert_time)
+        self.alert_timer.start()
+
+    def hide_alert_box(self):
+        self.alert_box.set_alpha(0)
+        self.alert_timer.reset()
 
     def show_message(self, message, time=1):
         self.message_timer.set_timer(time)
@@ -664,6 +716,8 @@ class GameScreen(Screen):
 
     def card_play(self, card_render):
         try:
+            if self.game.turn_ended:
+                return
             if self.game.get_current_player() == self.my_player:
                 played = self.game.play_card(self.my_player, card_render.card)
                 if played:
@@ -678,6 +732,8 @@ class GameScreen(Screen):
 
     def draw_card_from_deck(self):
         try:
+            if self.game.turn_ended:
+                return
             if self.game.get_current_player() == self.my_player:
                 self.game.draw_card(self.my_player)
                 self.end_turn()
