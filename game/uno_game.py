@@ -458,8 +458,9 @@ class UnoGame:
         elif achievement == "after other uno":
             player.in_game_achievements["after other uno"] = True
         elif achievement == "over 15 cards":
-            player.in_game_achievements["over 15 cards"] = True
-
+            if player.in_game_achievements["over 15 cards"] == False:
+                player.in_game_achievements["over 15 cards"] = True
+                self.add_game_event_info("achievement", "over 15 cards!")
         # alert
         if player.in_game_achievements["uno"] == 10:
             self.add_game_event_info("achievement", "uno over 10!")
