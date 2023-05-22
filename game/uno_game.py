@@ -73,6 +73,11 @@ class UnoGame:
     def _shuffle_deck(self):
         random.shuffle(self.deck)
 
+    def _recycle_discard_pile(self):
+        self.deck = self.discard_pile[:-1]
+        self._shuffle_deck()
+        self.discard_pile = [self.discard_pile[-1]]
+
     # Deal 7 cards to each player in turns.
     def _deal_cards(self, num_cards=7):
         for i in range(num_cards):
@@ -130,9 +135,9 @@ class UnoGame:
     def draw_card(self, player, draw_number=1):
         for i in range(draw_number):
             if len(self.deck) == 0:
-                self.game_over = True
-                self.add_game_event_info("game_over", "deck_empty")
-                return
+                self._recycle_discard_pile()
+            if len(self.deck) == 0:
+                return False
             card = self.deck.pop(0)
             self.add_card_move_animation(
                 card, src="deck", dest=f"player_{player.get_id()}"
@@ -140,6 +145,7 @@ class UnoGame:
             self.update_achievements(player, "draw")
         if player.get_hand_size() >= 15:
             self.update_achievements(player, "over 15 cards")
+        return True
 
     def can_play_card(self, card):
         if self.top_color == "black" or card.color == "black":
@@ -196,10 +202,10 @@ class UnoGame:
     # region Game Functions
 
     def _start_game(self):
-        self._start_turn(self.players[self.current_player_idx])
         self._shuffle_deck()
         self._deal_cards()
         self._set_top_discard_card()
+        self._start_turn(self.players[self.current_player_idx])
 
     def next_turn(self):
         self.next_player_idx += self.direction + self.player_number
@@ -278,7 +284,7 @@ class UnoGame:
                 self.update_achievements(self.winner, "10 turns")
             somebody_uno = False
             for p in self.players:
-                if p.uno_failed is False:
+                if p.uno_failed is False and p is not self.winner:
                     somebody_uno = True
                     break
             if somebody_uno:

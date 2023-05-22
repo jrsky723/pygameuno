@@ -113,6 +113,7 @@ class GameScreen(Screen):
             "card_flip": pygame.mixer.Sound(SOUND.CARD_FLIP),
             "error": pygame.mixer.Sound(SOUND.ERROR),
             "uno": pygame.mixer.Sound(SOUND.UNO),
+            "failed": pygame.mixer.Sound(SOUND.FAILED),
         }
 
         self.update_options()
@@ -588,6 +589,7 @@ class GameScreen(Screen):
                     f"{event_info['value'].get_name()} failed to call uno!",
                     time=self.message_time,
                 )
+                self.sounds["failed"].play()
             elif event_info["type"] == "achievement":
                 self.show_achievement(event_info["value"])
 
@@ -716,7 +718,7 @@ class GameScreen(Screen):
 
     def card_play(self, card_render):
         try:
-            if self.game.turn_ended:
+            if self.animations:
                 return
             if self.game.get_current_player() == self.my_player:
                 played = self.game.play_card(self.my_player, card_render.card)
@@ -732,12 +734,15 @@ class GameScreen(Screen):
 
     def draw_card_from_deck(self):
         try:
-            if self.game.turn_ended:
+            if self.animations:
                 return
             if self.game.get_current_player() == self.my_player:
-                self.game.draw_card(self.my_player)
-                self.end_turn()
-                self.sounds["card_flip"].play()
+                if self.game.draw_card(self.my_player) is False:
+                    self.sounds["error"].play()
+                else:
+                    self.sounds["card_flip"].play()
+                    self.end_turn()
+
         except Exception as e:
             print(e)
 

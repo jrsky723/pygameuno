@@ -33,6 +33,7 @@ class SOUND:
     CARD_FLIP = os.path.join(SOUNDS_PATH, "card_flip.mp3")
     ERROR = os.path.join(SOUNDS_PATH, "error.mp3")
     UNO = os.path.join(SOUNDS_PATH, "uno.mp3")
+    FAILED = os.path.join(SOUNDS_PATH, "failed.mp3")
     # change path to os path
 
 
