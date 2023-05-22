@@ -28,7 +28,9 @@ DEFAULT_OPTIONS = {
 
 DEFAULT_ACHIEVEMENTS = {
     "single player mode": {
-        "single mode": 0,
+        "single mode": {
+            "wins": 0,
+        },
         "story mode": {
             "red": 0,
             "green": 0,

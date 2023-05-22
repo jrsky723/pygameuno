@@ -18,6 +18,7 @@ from animations.skip_animation import SkipAnimation
 from utils.draw_functions import draw_inner_border
 from utils.constants import SCREEN as S, SIZE_RATIO as SR, SOUND, MUSIC, IMAGE
 from game.uno_constants import COLORS
+from utils.constants import IMAGE
 import copy
 
 
@@ -25,21 +26,34 @@ class GameScreen(Screen):
     def __init__(self, screen, clock, options, game_info):
         super().__init__(screen, clock, options)
         pygame.mixer.music.load(MUSIC.GAME_BACKGROUND)
-        pygame.mixer.music.play(-1)
         self.max_players = 6
         self.game_info = game_info
         self.my_player_idx = 0
+        self.background_image = None
         if game_info["mode"] == "story":
             if game_info["zone"] == "red_zone":
                 self.game = UnoGameRed(game_info["players"])
+                self.background_image = pygame.image.load(IMAGE.RED_ZONE)
+                pygame.mixer.music.load(MUSIC.RED_ZONE_BACKGROUND)
             elif game_info["zone"] == "green_zone":
-                self.game = UnoGameGreen(game_info["players"])
-            elif game_info["zone"] == "blue_zone":
-                self.game = UnoGameBlue(game_info["players"])
+                self.game = UnoGameGreen(game_info["players"])    
+                self.background_image = pygame.image.load(IMAGE.GREEN_ZONE)
+                pygame.mixer.music.load(MUSIC.GREEN_ZONE_BACKGROUND)
             elif game_info["zone"] == "yellow_zone":
                 self.game = UnoGameYellow(game_info["players"])
+                self.background_image = pygame.image.load(IMAGE.YELLOW_ZONE)
+                pygame.mixer.music.load(MUSIC.YELLOW_ZONE_BACKGROUND)
+            elif game_info["zone"] == "blue_zone":
+                self.game = UnoGameBlue(game_info["players"])
+                self.background_image = pygame.image.load(IMAGE.BLUE_ZONE)
+                pygame.mixer.music.load(MUSIC.BLUE_ZONE_BACKGROUND)
+            
+            self.background_image = pygame.transform.scale(
+                self.background_image, (self.screen_width, self.screen_height)
+            )    
         else:
             self.game = UnoGame(game_info["players"])
+        pygame.mixer.music.play(-1)
         self.my_player = self.game.get_player(self.my_player_idx)
         self.my_player.create_achievements()
         self.coms = self.game.get_com_players()
@@ -140,12 +154,12 @@ class GameScreen(Screen):
             "size": (self.screen_width / 4, self.screen_height / 5),
             "gap": (self.screen_height / 5),
         }
-        self.my_hand_surface = pygame.Surface(self.my_hand_surface_const["size"])
-        self.board_surface = pygame.Surface(self.board_surface_const["size"])
+        self.my_hand_surface = pygame.Surface(self.my_hand_surface_const["size"], pygame.SRCALPHA, 32)
+        self.board_surface = pygame.Surface(self.board_surface_const["size"], pygame.SRCALPHA, 32)
         self.com_hand_surfaces = []
         for _ in range(self.max_players - 1):
             self.com_hand_surfaces.append(
-                pygame.Surface(self.com_hand_surface_const["size"])
+                pygame.Surface(self.com_hand_surface_const["size"], pygame.SRCALPHA, 32)
             )
         self.surfaces = [
             self.my_hand_surface,
@@ -426,7 +440,7 @@ class GameScreen(Screen):
             )
         # fill surfaces & add inner border
         for surface in self.surfaces:
-            surface.fill(self.background_color)
+            surface.fill((0, 0, 0, 0))
             draw_inner_border(surface, rgb("white"), 3)
 
     def draw_card_renders(self):
@@ -445,15 +459,21 @@ class GameScreen(Screen):
         self.achievement_text.draw(self.alert_box)
         self.screen.blit(self.alert_box, self.alert_box_pos)
 
+    def draw_background(self):
+        if self.background_image is not None:
+            self.screen.blit(self.background_image, (0, 0))
+        else:
+            self.screen.fill(self.background_color)
+
     def draw(self):
         super().draw()
+        self.draw_background()
         self.draw_surfaces()
         self.draw_board()
         self.draw_players()
         self.draw_card_renders()
         self.draw_animations()
         self.draw_alert_box()
-
     # endregion
 
     # region Main Loop

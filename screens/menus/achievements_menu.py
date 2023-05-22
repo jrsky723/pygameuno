@@ -28,7 +28,6 @@ class AchievementMenuScreen(MenuScreen):
         ]
         T_X, T_Y, T_GAP1, T_GAP2 = 100, 250, 40, 30
         text_params = {"x": T_X, "font_size": 20, **self.rect_params}
-        i = 0
         for key, value in single_player_achievements.items():
             if isinstance(value, dict):
                 self.texts += [

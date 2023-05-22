@@ -40,11 +40,19 @@ class SOUND:
 class MUSIC:
     MENU_BACKGROUND = os.path.join(SOUNDS_PATH, "sinnesloschen-beam.mp3")
     GAME_BACKGROUND = os.path.join(SOUNDS_PATH, "cool-jazz-loops-2641.mp3")
+    RED_ZONE_BACKGROUND = os.path.join(SOUNDS_PATH, "japan-koto-folk-background-music-124876.mp3")
+    GREEN_ZONE_BACKGROUND = os.path.join(SOUNDS_PATH, "secret-garden-mystically-chill-out-music-7489.mp3")
+    YELLOW_ZONE_BACKGROUND = os.path.join(SOUNDS_PATH, "middle-east-127104.mp3")
+    BLUE_ZONE_BACKGROUND = os.path.join(SOUNDS_PATH, "cinematic-landscape-118672.mp3")
 
 
 class IMAGE:
     STORY_MODE = os.path.join(IMAGES_PATH, "story_mode.png")
     CROWN = os.path.join(IMAGES_PATH, "crown.png")
+    RED_ZONE = os.path.join(IMAGES_PATH, "red_zone.png")
+    GREEN_ZONE = os.path.join(IMAGES_PATH, "green_zone.png")
+    YELLOW_ZONE = os.path.join(IMAGES_PATH, "yellow_zone.png")
+    BLUE_ZONE = os.path.join(IMAGES_PATH, "blue_zone.png")
 
 
 # Colors
@@ -121,7 +129,6 @@ class INPUTBOX:
     BORDER_WIDTH = 0
     HOVERED_BORDER_WIDTH = 2
     SELECTED_BORDER_WIDTH = 4
-
 
 ## Story mode constants
 
