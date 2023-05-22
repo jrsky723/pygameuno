@@ -2,6 +2,7 @@ import pygame
 from screens.menus.start_menu import StartMenuScreen as MenuScreen
 from utils.json import load_json
 from utils.constants import SCREEN as S, MUSIC as M
+import sys
 
 if __name__ == "__main__":
     pygame.init()
@@ -20,4 +21,4 @@ if __name__ == "__main__":
     start_menu = MenuScreen(screen, clock, options)
     start_menu.run()
     pygame.quit()
-    quit()
+    sys.exit()

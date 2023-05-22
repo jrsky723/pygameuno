@@ -2,6 +2,7 @@ import pygame
 import traceback
 from utils.constants import SCREEN as S
 from utils.color_conversion import rgb
+import sys
 
 
 class Screen:
@@ -96,8 +97,7 @@ class Screen:
 
     def handle_quit_event(self, event):
         if event.type == pygame.QUIT:
-            pygame.quit()
-            quit()
+            self.quit()
 
     def handle_mouse_event(self, event):
         pass
@@ -122,7 +122,7 @@ class Screen:
 
     def quit(self):
         pygame.quit()
-        quit()
+        sys.exit()
 
     def back(self):
         self.running = False
