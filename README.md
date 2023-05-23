@@ -43,36 +43,3 @@
 7. 승리: 먼저 손에 있는 모든 카드를 소진한 플레이어가 승리합니다. 게임이 끝날 때 다른 플레이어들의 손에 남아 있는 카드의 점수가 승리한 플레이어에게 부여됩니다. 숫자 카드는 해당 숫자만큼의 점수가, 액션 카드는 20점, 와일드 카드는 50점으로 계산됩니다. 일반적으로 미리 정한 점수에 도달한 플레이어가 최종 승자가 됩니다.
 
 8. 무승부: 덱에서 남은 카드가 없고 플레이어들이 카드를 내지 못할 경우, 무승부로 게임이 종료됩니다. 이 경우 모든 플레이어의 손에 남아 있는 카드의 점수를 합산하고, 점수가 가장 낮은 플레이어가 승리합니다.
-
-## 조작 방법및 예시
-
-## 시작 메뉴 창
-
-## ![StartMenuScreen](https://user-images.githubusercontent.com/42289726/232302391-fa6d41cc-36e8-4ea2-b11d-0dfae2ec1a31.png)
-
-## 3 종류의 size
-
----
-
-### 세팅 메뉴 사용 예시
-
-- small size
-  <img src=https://user-images.githubusercontent.com/42289726/232302423-58b1ca85-0c84-400f-9f1e-beaf1add180c.png width="480" height="270"/>
-
-- medium size
-  <img src=https://user-images.githubusercontent.com/42289726/232302427-021ac335-187b-43e5-a417-4a5d2681fb34.png width="640" height="360"/>
-
-- large size
-  <img src=https://user-images.githubusercontent.com/42289726/232302429-f0a01e5b-ce5b-4963-9eaf-04d732226d34.png width="800" height="450"/>
-
----
-
-## 키보드 세팅 메뉴
-
----
-
-- Key Setting Menu Screen
-  ![KeySetting](https://user-images.githubusercontent.com/42289726/232302434-2f1acec4-c207-493d-b3a7-f1d119869c3c.png)
-
-- Key setting Example
-  ![Pygame Uno 2023-04-16 19-10-31](https://user-images.githubusercontent.com/42289726/232302150-a034bfde-9a7a-48ac-afa0-6bb3a3c55b96.gif)
