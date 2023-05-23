@@ -15,4 +15,7 @@
 2. Story mode (unlocked when cleared. Give it a try!)
 3. Screen adjustment and colorblind mode implemented
 
+--------------------------------------------------------
+- For future implementation, the network lobby panel was implemented.
+
 ![image](https://github.com/jrsky723/pygameuno/assets/67538999/8f91508a-c004-45cb-a758-26dc54efe7d7)
