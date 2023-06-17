@@ -9,6 +9,7 @@
 ## How to Run
 
 1. Run pygameuno.exe in the release folder.
+2. Python 3.10 or later is required to run.
 
 ## Features
 1. Single-player mode (up to a maximum of 5 computer players)
