@@ -10,7 +10,7 @@ class UnoGameBlue(UnoGame):
     def _end_turn(self, player):
         super()._end_turn(player)
         if player.is_human():
-            self.random_reload_rate += 0.05
+            self.random_reload_rate += 0.1
             if self.random_reload_rate > 1:
                 self.random_reload_rate = 1
 
